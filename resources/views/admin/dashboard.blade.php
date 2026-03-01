@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard — {{ $group->name }}')
+@section('title', 'Admin Dashboard — '. $group->name)
 
 @section('content')
 <div class="max-w-3xl mx-auto">

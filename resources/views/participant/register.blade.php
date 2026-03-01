@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Join {{ $group->name }} — Tahadou')
+@section('title', 'Join '.$group->name.'— Tahadou')
 
 @section('content')
 <div class="max-w-lg mx-auto">
