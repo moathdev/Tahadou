@@ -71,7 +71,7 @@ class AdminController extends Controller
 
         $participant->delete();
 
-        return redirect()->route('admin.dashboard', $uuid)->with('success', 'Participant removed.');
+        return redirect()->route('admin.dashboard', $uuid)->with('success', __('app.participant_removed'));
     }
 
     /**
@@ -84,8 +84,8 @@ class AdminController extends Controller
         $group = Group::where('uuid', $uuid)->firstOrFail();
         $group->update(['is_locked' => ! $group->is_locked]);
 
-        $status = $group->is_locked ? 'locked' : 'unlocked';
-        return redirect()->route('admin.dashboard', $uuid)->with('success', "Registration {$status}.");
+        $msg = $group->is_locked ? __('app.registration_locked') : __('app.registration_unlocked');
+        return redirect()->route('admin.dashboard', $uuid)->with('success', $msg);
     }
 
     /**
@@ -107,7 +107,7 @@ class AdminController extends Controller
 
         $this->drawService->execute($group);
 
-        return redirect()->route('admin.dashboard', $uuid)->with('success', '🎁 Draw executed! WhatsApp messages are being sent.');
+        return redirect()->route('admin.dashboard', $uuid)->with('success', __('app.draw_success'));
     }
 
     /**
