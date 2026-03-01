@@ -41,7 +41,7 @@
     </script>
     @stack('styles')
 </head>
-<body class="min-h-screen bg-gradient-to-br from-violet-50 via-white to-amber-50 font-sans text-gray-800">
+<body class="min-h-screen flex flex-col bg-gradient-to-br from-violet-50 via-white to-amber-50 font-sans text-gray-800">
 
     <nav class="bg-white/80 backdrop-blur border-b border-violet-100 shadow-sm">
         <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -60,7 +60,7 @@
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto px-4 py-10">
+    <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-10">
         @if (session('success'))
             <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm">
                 ✅ {{ session('success') }}
@@ -80,9 +80,9 @@
         @yield('content')
     </main>
 
-    <footer class="mt-16 py-6 text-center text-xs text-gray-400 border-t border-gray-100">
-        {{ __('app.app_name') }} © {{ date('Y') }} — {{ __('app.footer') }}
-        <a href="{{ __('app.footer_url') }}" class="text-violet-500 hover:underline">{{ __('app.footer_author') }}</a>
+    <footer class="py-6 text-center text-xs text-gray-400 border-t border-gray-100 mt-auto">
+        تهادوا تحابوا © {{ date('Y') }} — صُنع بـ ❤️ من قِبل
+        <a href="https://moath.co" class="text-violet-500 hover:underline">Muath Aljohani</a>
     </footer>
 
     @stack('scripts')
