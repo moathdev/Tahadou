@@ -94,27 +94,59 @@
                 {{ __('app.no_participants') }}
             </div>
         @else
-            <ul class="divide-y divide-gray-50">
+            <ul class="divide-y divide-gray-100">
                 @foreach($participants as $participant)
-                <li class="flex items-center justify-between px-6 py-4">
-                    <div>
-                        <p class="font-medium text-gray-700">{{ $participant->name }}</p>
-                        <p class="text-xs text-gray-400">{{ __('app.registered_at', ['time' => $participant->created_at->diffForHumans()]) }}</p>
-                    </div>
+                <li class="px-6 py-5">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex-1 min-w-0">
 
-                    @if(! $group->is_drawn)
-                    <form
-                        action="{{ route('admin.participants.remove', [$group->uuid, $participant->id]) }}"
-                        method="POST"
-                        onsubmit="return confirm('{{ __('app.remove_confirm', ['name' => $participant->name]) }}');"
-                    >
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-xs text-red-400 hover:text-red-600 transition">
-                            {{ __('app.remove_btn') }}
-                        </button>
-                    </form>
-                    @endif
+                            {{-- Name + time --}}
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <p class="font-semibold text-gray-800">{{ $participant->name }}</p>
+                                @if($group->is_drawn && $participant->assignedTo)
+                                    <span class="text-xs px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-medium">
+                                        🎁 → {{ $participant->assignedTo->name }}
+                                    </span>
+                                @endif
+                            </div>
+
+                            {{-- Phone --}}
+                            <p class="text-xs text-gray-500 mt-1">
+                                📱 {{ $participant->phone_number }}
+                            </p>
+
+                            {{-- Interests --}}
+                            @if($participant->interests && count($participant->interests))
+                            <div class="flex flex-wrap gap-1 mt-2">
+                                @foreach($participant->interests as $interestKey)
+                                    <span class="text-xs px-2 py-0.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-full">
+                                        {{ __('app.interest_' . $interestKey) }}
+                                    </span>
+                                @endforeach
+                            </div>
+                            @endif
+
+                            <p class="text-xs text-gray-400 mt-2">
+                                {{ __('app.registered_at', ['time' => $participant->created_at->diffForHumans()]) }}
+                            </p>
+                        </div>
+
+                        {{-- Remove button --}}
+                        @if(! $group->is_drawn)
+                        <form
+                            action="{{ route('admin.participants.remove', [$group->uuid, $participant->id]) }}"
+                            method="POST"
+                            onsubmit="return confirm('{{ __('app.remove_confirm', ['name' => $participant->name]) }}');"
+                            class="shrink-0"
+                        >
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-xs text-red-400 hover:text-red-600 transition mt-1">
+                                {{ __('app.remove_btn') }}
+                            </button>
+                        </form>
+                        @endif
+                    </div>
                 </li>
                 @endforeach
             </ul>

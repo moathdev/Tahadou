@@ -48,7 +48,11 @@ class AdminController extends Controller
         $this->requireAuth($uuid);
 
         $group        = Group::where('uuid', $uuid)->withCount('participants')->firstOrFail();
-        $participants = $group->participants()->select(['id', 'name', 'created_at'])->latest()->get();
+        $participants = $group->participants()
+            ->with('assignedTo')
+            ->select(['id', 'name', 'phone_number', 'interests', 'assigned_to_id', 'created_at'])
+            ->latest()
+            ->get();
 
         return view('admin.dashboard', compact('group', 'participants'));
     }

@@ -101,8 +101,8 @@ return [
     'interest_food'        => '🍫 Food & Sweets',
 
     // Closed Page
-    'closed_draw_title'   => 'Draw Already Executed',
-    'closed_draw_body'    => 'The gift exchange draw for :group has already been completed. Check your WhatsApp for your assignment!',
+    'closed_draw_title'   => 'Draw Already Done!',
+    'closed_draw_body'    => 'The draw is complete! 🎉 Check your WhatsApp to find out who you\'ll be gifting.',
     'closed_lock_title'   => 'Registration Locked',
     'closed_lock_body'    => 'The admin has locked registration for :group. Please contact the group admin.',
     'closed_full_title'   => 'Group is Full',

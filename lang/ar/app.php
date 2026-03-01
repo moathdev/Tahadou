@@ -101,8 +101,8 @@ return [
     'interest_food'        => '🍫 الطعام والحلويات',
 
     // Closed Page
-    'closed_draw_title'   => 'تمت القرعة بالفعل',
-    'closed_draw_body'    => 'تمت قرعة :group بالفعل. تحقق من واتساب لمعرفة هديتك!',
+    'closed_draw_title'   => 'تمت القرعة',
+    'closed_draw_body'    => 'تمت القرعة! 🎉 تحقق من واتساب لمعرفة مين راح تهدي.',
     'closed_lock_title'   => 'التسجيل مغلق',
     'closed_lock_body'    => 'أغلق المشرف التسجيل في :group. تواصل مع المشرف.',
     'closed_full_title'   => 'المجموعة مكتملة',
