@@ -44,12 +44,10 @@ return [
 
     // Admin Find Group
     'admin_find_title'          => 'Admin Access',
-    'admin_find_subtitle'       => 'Enter your group ID to access the dashboard',
-    'admin_find_uuid_label'     => 'Group ID (UUID)',
-    'admin_find_uuid_placeholder'=> 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
-    'admin_find_uuid_required'  => 'Please enter the group ID.',
+    'admin_find_subtitle'       => 'Enter your admin code to access your dashboard',
     'admin_find_btn'            => 'Access Dashboard →',
-    'admin_find_hint'           => 'You can find your group ID on the group creation page.',
+    'admin_find_hint'           => 'Your admin code was shown once when you created the group.',
+    'admin_code_invalid'        => 'Invalid admin code.',
 
     // Admin Login
     'admin_login_title'   => 'Admin Access',

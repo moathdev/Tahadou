@@ -17,6 +17,7 @@ class Group extends Model
         'max_participants',
         'max_gift_price',
         'admin_code',
+        'admin_lookup',
         'is_locked',
         'is_drawn',
     ];

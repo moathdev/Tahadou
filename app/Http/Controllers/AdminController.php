@@ -16,11 +16,34 @@ class AdminController extends Controller
     public function __construct(protected DrawService $drawService) {}
 
     /**
-     * Show the "find your group" page (entry point from navbar).
+     * Show the "enter admin code" page (entry point from navbar).
      */
     public function findForm()
     {
         return view('admin.find');
+    }
+
+    /**
+     * Look up group by admin code (via SHA-256 lookup) and authenticate in one step.
+     */
+    public function findAndLogin(Request $request): RedirectResponse
+    {
+        $input = strtoupper(trim($request->input('admin_code', '')));
+
+        if (empty($input)) {
+            return back()->withErrors(['admin_code' => __('app.admin_find_uuid_required')]);
+        }
+
+        $lookup = hash('sha256', $input);
+        $group  = Group::where('admin_lookup', $lookup)->first();
+
+        if (! $group || ! Hash::check($input, $group->admin_code)) {
+            return back()->withErrors(['admin_code' => __('app.admin_code_invalid')]);
+        }
+
+        Session::put("admin_group_{$group->uuid}", true);
+
+        return redirect()->route('admin.dashboard', $group->uuid);
     }
 
     /**

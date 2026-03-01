@@ -1,21 +1,21 @@
 # 🎁 Tahadou — Eid Gift Exchange Platform
 
-> An automated, secure, and user-friendly platform for organizing Eid gift exchanges among friends and family.
+> A clean, bilingual (Arabic/English) web platform for organizing Eid gift exchanges among friends and family. No app downloads, no sign-ups — just a link.
 
 ---
 
 ## ✨ Features
 
-- 🌐 **Bilingual** — Arabic (RTL) and English with a language switcher on every page
+- 🌐 **Bilingual** — Arabic (RTL) default + English with a language switcher on every page
 - 🔗 **Shareable registration link** — auto-generated when a group is created
-- 🔑 **Private admin code** — shown only once at creation
-- 👥 **Admin dashboard** — view participants with interests and phone numbers, remove participants, lock registration, execute draw
-- 💰 **Max gift price** — optional budget cap shown to participants on registration and included in the WhatsApp message
+- 🔑 **Code-only admin access** — enter your 8-character admin code at `/admin` to reach your dashboard (no UUID needed)
+- 👥 **Admin dashboard** — view participants, remove them, lock registration, execute the draw, send WhatsApp messages
+- 💰 **Max gift price** — optional budget cap shown to participants at registration and included in the WhatsApp message
 - 📝 **Participant registration** — full name, WhatsApp number, up to 3 interests from 10 categories
-- 🎯 **Smart draw algorithm** — Circular Permutation ensuring no self-assignment and no two-person loops
-- 📱 **Direct WhatsApp send** — after the draw, each participant row has a button that opens WhatsApp with a pre-written message
-- ✅ **Send tracking** — button turns to "Sent" with an option to resend
-- 🛡️ **Strict validation** — Saudi mobile format only, name minimum 3 characters, no duplicate phone per group
+- 🎯 **Smart draw algorithm** — Circular Permutation (no self-assignment, no two-person loops)
+- 📱 **Direct WhatsApp send** — after the draw, each row has a button that opens WhatsApp with a pre-written bilingual message
+- ✅ **Send tracking** — button turns to "Sent ✓" with an option to resend (stored in `localStorage`)
+- 🛡️ **Strict validation** — Saudi mobile format only (`05XXXXXXXXX`), name ≥ 3 characters, no duplicate phone per group
 
 ---
 
@@ -69,31 +69,44 @@ App available at: **http://localhost:8000**
 
 ---
 
+## 🔐 Admin Access
+
+Admins **do not need the group UUID** — just the 8-character code shown once at group creation.
+
+1. Click **🔐 المشرف / Admin** in the navbar (or go to `/admin`)
+2. Enter the admin code
+3. You're taken directly to the dashboard
+
+The admin code is stored as bcrypt in the DB. A SHA-256 lookup hash (`admin_lookup`) enables code-only lookup without exposing the raw code.
+
+---
+
 ## 🗄 Database Schema
 
 ### `groups`
-| Column            | Type       | Notes                               |
-|-------------------|------------|-------------------------------------|
-| id                | bigint PK  |                                     |
-| uuid              | string     | Unique — used in the shareable URL  |
-| name              | string     | Group display name                  |
-| max_participants  | int        | Maximum allowed participants        |
-| max_gift_price    | int?       | Optional max gift budget (SAR)      |
-| admin_code        | string     | Bcrypt hashed admin password        |
-| is_locked         | boolean    | Locks new registrations             |
-| is_drawn          | boolean    | True after draw is executed         |
-| created_at/updated_at | timestamp |                                 |
+| Column           | Type      | Notes                                         |
+|------------------|-----------|-----------------------------------------------|
+| id               | bigint PK |                                               |
+| uuid             | string    | Unique — used in participant registration URL |
+| name             | string    | Group display name                            |
+| max_participants | int       | Maximum allowed participants                  |
+| max_gift_price   | int?      | Optional max gift budget (SAR)                |
+| admin_code       | string    | Bcrypt-hashed admin password                  |
+| admin_lookup     | string    | SHA-256 of raw admin code (for code-only login)|
+| is_locked        | boolean   | Locks new registrations when true             |
+| is_drawn         | boolean   | True after draw is executed                   |
+| created_at/updated_at | timestamp |                                          |
 
 ### `participants`
-| Column          | Type       | Notes                                      |
-|-----------------|------------|--------------------------------------------|
-| id              | bigint PK  |                                            |
-| group_id        | bigint FK  | → groups.id                                |
-| name            | string     | Full name                                  |
-| phone_number    | string     | Saudi mobile (unique per group)            |
-| interests       | JSON       | Up to 3 selected interest keys             |
-| assigned_to_id  | bigint FK  | → participants.id (null until draw)        |
-| created_at/updated_at | timestamp |                                      |
+| Column          | Type      | Notes                                    |
+|-----------------|-----------|------------------------------------------|
+| id              | bigint PK |                                          |
+| group_id        | bigint FK | → groups.id                              |
+| name            | string    | Full name                                |
+| phone_number    | string    | Saudi mobile (unique per group)          |
+| interests       | JSON      | Up to 3 selected interest keys           |
+| assigned_to_id  | bigint FK | → participants.id (null until draw)      |
+| created_at/updated_at | timestamp |                                    |
 
 ---
 
@@ -105,6 +118,7 @@ App available at: **http://localhost:8000**
 2. Each participant `[i]` gives to `[i+1]`; the last gives to `[0]`
 3. ✅ No one draws themselves
 4. ✅ No two-person closed loops (for groups > 2)
+5. Results saved directly to DB — no external services
 
 ---
 
@@ -128,22 +142,24 @@ Their interests:
 Prepare their gift before Eid! 🌙
 ```
 
+The button state ("Send" → "Sent ✓") is tracked per-participant in `localStorage` so it persists across page refreshes.
+
 ---
 
 ## 🎁 Gift Interest Categories
 
-| Key          | English                  |
-|--------------|--------------------------|
-| books        | 📚 Books                 |
-| electronics  | 📱 Electronics & Gadgets |
-| sports       | 🏋️ Sports & Fitness      |
-| fashion      | 👗 Fashion & Accessories |
-| home         | 🏠 Home & Kitchen        |
-| games        | 🎮 Games & Entertainment |
-| beauty       | 💄 Beauty & Skincare     |
-| travel       | ✈️ Travel & Outdoor      |
-| art          | 🎨 Art & Crafts          |
-| food         | 🍫 Food & Sweets         |
+| Key          | Arabic              | English                  |
+|--------------|---------------------|--------------------------|
+| books        | 📚 الكتب            | 📚 Books                 |
+| electronics  | 📱 الإلكترونيات     | 📱 Electronics & Gadgets |
+| sports       | 🏋️ الرياضة          | 🏋️ Sports & Fitness      |
+| fashion      | 👗 الموضة           | 👗 Fashion & Accessories |
+| home         | 🏠 المنزل والمطبخ   | 🏠 Home & Kitchen        |
+| games        | 🎮 الألعاب          | 🎮 Games & Entertainment |
+| beauty       | 💄 التجميل          | 💄 Beauty & Skincare     |
+| travel       | ✈️ السفر            | ✈️ Travel & Outdoor      |
+| art          | 🎨 الفن             | 🎨 Art & Crafts          |
+| food         | 🍫 الطعام والحلويات | 🍫 Food & Sweets         |
 
 ---
 
@@ -198,7 +214,7 @@ app/
 ├── Http/
 │   ├── Controllers/
 │   │   ├── GroupController.php        # Group creation
-│   │   ├── AdminController.php        # Dashboard, draw, WhatsApp
+│   │   ├── AdminController.php        # Find group, dashboard, draw, WhatsApp
 │   │   └── ParticipantController.php  # Registration
 │   ├── Middleware/
 │   │   └── SetLocale.php              # Session-based ar/en locale
@@ -207,23 +223,31 @@ app/
 │   ├── Group.php
 │   └── Participant.php
 └── Services/
-    └── DrawService.php                # Circular permutation algorithm
+    ├── DrawService.php                # Circular permutation algorithm
+    └── XlsxExporter.php               # SpreadsheetML export (internal use)
 
 lang/
 ├── ar/app.php + validation.php        # Arabic translations
 └── en/app.php + validation.php        # English translations
 
 resources/views/
-├── layouts/app.blade.php              # RTL/LTR layout + lang switcher
-├── home.blade.php                     # Landing page
-├── group/created.blade.php            # Post-creation page
+├── layouts/app.blade.php              # RTL/LTR layout + lang switcher + admin btn
+├── home.blade.php                     # Landing page — create group
+├── group/created.blade.php            # Post-creation — shows code + share link
 ├── admin/
-│   ├── login.blade.php
-│   └── dashboard.blade.php
+│   ├── find.blade.php                 # Code-only login entry (/admin)
+│   ├── login.blade.php                # UUID-based login (direct URL access)
+│   └── dashboard.blade.php           # Group management + WhatsApp buttons
 └── participant/
     ├── register.blade.php
     ├── success.blade.php
     └── closed.blade.php
+
+database/migrations/
+├── 2025_01_01_000001_create_groups_table.php
+├── 2025_01_01_000002_create_participants_table.php
+├── 2025_01_02_000001_add_max_gift_price_to_groups_table.php
+└── 2025_01_03_000001_add_admin_lookup_to_groups_table.php
 
 k8s/
 ├── deployment.yaml                    # App + queue worker

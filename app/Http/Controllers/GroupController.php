@@ -30,6 +30,7 @@ class GroupController extends Controller
             'max_participants' => $request->max_participants,
             'max_gift_price'   => $request->max_gift_price ?: null,
             'admin_code'       => Hash::make($rawAdminCode),
+            'admin_lookup'     => hash('sha256', strtoupper($rawAdminCode)),
         ]);
 
         return view('group.created', [

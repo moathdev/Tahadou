@@ -11,32 +11,37 @@
     </div>
 
     <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-        <div class="space-y-5" id="find-form">
+        <form action="{{ route('admin.find.submit') }}" method="POST" class="space-y-5">
+            @csrf
 
             <div>
-                <label for="group_uuid" class="block text-sm font-medium text-gray-600 mb-1">
-                    {{ __('app.admin_find_uuid_label') }}
+                <label for="admin_code" class="block text-sm font-medium text-gray-600 mb-1">
+                    {{ __('app.admin_code_label') }}
                 </label>
                 <input
                     type="text"
-                    id="group_uuid"
-                    name="group_uuid"
-                    placeholder="{{ __('app.admin_find_uuid_placeholder') }}"
+                    id="admin_code"
+                    name="admin_code"
+                    value="{{ old('admin_code') }}"
+                    placeholder="{{ __('app.admin_code_placeholder') }}"
+                    required
                     autofocus
-                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-violet-400 outline-none transition text-sm font-mono tracking-wider text-center"
+                    autocomplete="off"
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-violet-400 outline-none transition text-sm font-mono uppercase tracking-widest text-center"
                     dir="ltr"
                 />
-                <p id="uuid-error" class="text-red-500 text-xs mt-1 hidden">{{ __('app.admin_find_uuid_required') }}</p>
+                @error('admin_code')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <button
-                type="button"
-                onclick="goToAdmin()"
+                type="submit"
                 class="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold transition text-sm"
             >
                 {{ __('app.admin_find_btn') }}
             </button>
-        </div>
+        </form>
     </div>
 
     <p class="text-center text-xs text-gray-400 mt-6">
@@ -47,24 +52,11 @@
 
 @push('scripts')
 <script>
-    // Allow Enter key to submit
-    document.getElementById('group_uuid').addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') goToAdmin();
+    // Auto-uppercase as user types
+    document.getElementById('admin_code').addEventListener('input', function () {
+        const pos = this.selectionStart;
+        this.value = this.value.toUpperCase();
+        this.setSelectionRange(pos, pos);
     });
-
-    function goToAdmin() {
-        const uuid = document.getElementById('group_uuid').value.trim();
-        const err  = document.getElementById('uuid-error');
-
-        if (!uuid) {
-            err.classList.remove('hidden');
-            return;
-        }
-
-        err.classList.add('hidden');
-
-        // Redirect to the admin login page for this group UUID
-        window.location.href = '/admin/' + encodeURIComponent(uuid) + '/login';
-    }
 </script>
 @endpush

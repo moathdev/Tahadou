@@ -32,7 +32,8 @@ Route::post('/groups', [GroupController::class, 'create'])->name('group.create')
 | Admin Entry — find group by UUID
 |--------------------------------------------------------------------------
 */
-Route::get('/admin', [AdminController::class, 'findForm'])->name('admin.find');
+Route::get('/admin',  [AdminController::class, 'findForm'])->name('admin.find');
+Route::post('/admin', [AdminController::class, 'findAndLogin'])->name('admin.find.submit');
 
 /*
 |--------------------------------------------------------------------------
