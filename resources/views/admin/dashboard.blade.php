@@ -22,8 +22,15 @@
         </div>
     </div>
 
+    {{-- Max gift price reminder --}}
+    @if($group->max_gift_price)
+    <div class="mb-5 flex items-center gap-3 px-5 py-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm font-medium">
+        💰 <span>الحد الأقصى لسعر الهدية: <strong>{{ number_format($group->max_gift_price) }} ريال</strong></span>
+    </div>
+    @endif
+
     <!-- Stats -->
-    <div class="grid grid-cols-{{ $group->max_gift_price ? '4' : '3' }} gap-4 mb-6">
+    <div class="grid grid-cols-3 gap-4 mb-6">
         <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm text-center">
             <div class="text-3xl font-bold text-violet-600">{{ $group->participants_count }}</div>
             <div class="text-xs text-gray-400 mt-1">{{ __('app.stat_registered') }}</div>
@@ -36,12 +43,6 @@
             <div class="text-3xl font-bold text-gray-600">{{ $group->max_participants - $group->participants_count }}</div>
             <div class="text-xs text-gray-400 mt-1">{{ __('app.stat_remaining') }}</div>
         </div>
-        @if($group->max_gift_price)
-        <div class="bg-amber-50 rounded-xl p-4 border border-amber-200 shadow-sm text-center">
-            <div class="text-3xl font-bold text-amber-600">{{ number_format($group->max_gift_price) }}</div>
-            <div class="text-xs text-amber-500 mt-1">💰 ريال</div>
-        </div>
-        @endif
     </div>
 
     <!-- Actions -->
