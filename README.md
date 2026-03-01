@@ -1,48 +1,46 @@
-# 🎁 تهادوا تحابوا — Eid Gift Exchange Platform
+# 🎁 Tahadou — Eid Gift Exchange Platform
 
-> منصة متكاملة وآمنة لتنظيم تبادل الهدايا في مناسبات العيد.
-> An automated, secure, and user-friendly platform for organizing Eid gift exchanges.
-
----
-
-## ✨ المميزات / Features
-
-- 🌐 **ثنائي اللغة** — عربي (RTL) وإنجليزي مع زر تبديل في كل صفحة
-- 🔗 **رابط تسجيل قابل للمشاركة** — ينشأ تلقائياً عند إنشاء المجموعة
-- 🔑 **كود مشرف خاص** — يُعرض مرة واحدة فقط عند الإنشاء
-- 👥 **لوحة تحكم المشرف** — عرض المشتركين مع اهتماماتهم وأرقامهم، إزالة مشترك، قفل التسجيل، تنفيذ القرعة
-- 💰 **حد أقصى لسعر الهدية** — اختياري، يظهر للمشتركين عند التسجيل وفي رسالة الواتساب
-- 📝 **تسجيل المشتركين** — الاسم، رقم الواتساب، واختيار حتى 3 اهتمامات من 10 فئات
-- 🎯 **خوارزمية القرعة** — Circular Permutation تضمن ألا يهدي أحد نفسه
-- 📱 **إرسال واتساب مباشر** — بعد القرعة، زر لكل مشترك يفتح الواتساب مع رسالة جاهزة
-- ✅ **تتبع الإرسال** — الزر يتحول لـ "تم الإرسال" مع إمكانية إعادة الإرسال
-- 🛡️ **تحقق صارم** — رقم جوال سعودي فقط، اسم لا يقل عن 3 أحرف، لا تكرار في نفس المجموعة
+> An automated, secure, and user-friendly platform for organizing Eid gift exchanges among friends and family.
 
 ---
 
-## 🛠 التقنيات / Tech Stack
+## ✨ Features
 
-| Layer        | Technology                          |
-|--------------|--------------------------------------|
-| Backend      | PHP 8.2+ / Laravel 11                |
-| Database     | MySQL 8                              |
-| Frontend     | Blade + Tailwind CSS (CDN)           |
-| Localisation | Arabic (RTL) + English (LTR)         |
-| Containers   | Docker + Supervisor (nginx + php-fpm)|
-| Orchestration| k3s (Kubernetes)                     |
-| Edge / CDN   | Cloudflare (WAF ready)               |
+- 🌐 **Bilingual** — Arabic (RTL) and English with a language switcher on every page
+- 🔗 **Shareable registration link** — auto-generated when a group is created
+- 🔑 **Private admin code** — shown only once at creation
+- 👥 **Admin dashboard** — view participants with interests and phone numbers, remove participants, lock registration, execute draw
+- 💰 **Max gift price** — optional budget cap shown to participants on registration and included in the WhatsApp message
+- 📝 **Participant registration** — full name, WhatsApp number, up to 3 interests from 10 categories
+- 🎯 **Smart draw algorithm** — Circular Permutation ensuring no self-assignment and no two-person loops
+- 📱 **Direct WhatsApp send** — after the draw, each participant row has a button that opens WhatsApp with a pre-written message
+- ✅ **Send tracking** — button turns to "Sent" with an option to resend
+- 🛡️ **Strict validation** — Saudi mobile format only, name minimum 3 characters, no duplicate phone per group
 
 ---
 
-## 🚀 التشغيل المحلي / Local Setup
+## 🛠 Tech Stack
 
-### المتطلبات / Requirements
+| Layer         | Technology                           |
+|---------------|--------------------------------------|
+| Backend       | PHP 8.2+ / Laravel 11                |
+| Database      | MySQL 8                              |
+| Frontend      | Blade + Tailwind CSS (CDN)           |
+| Localisation  | Arabic (RTL) + English (LTR)         |
+| Containers    | Docker + Supervisor (nginx + php-fpm)|
+| Orchestration | k3s (Kubernetes)                     |
+| Edge / CDN    | Cloudflare (WAF ready)               |
+
+---
+
+## 🚀 Local Setup
+
+### Requirements
 - PHP 8.2+
 - Composer
 - MySQL 8
-- Node.js (for assets, optional)
 
-### الخطوات / Steps
+### Steps
 
 ```bash
 git clone https://github.com/moathdev/Tahadou.git
@@ -67,96 +65,96 @@ php artisan migrate
 php artisan serve
 ```
 
-App: **http://localhost:8000**
+App available at: **http://localhost:8000**
 
 ---
 
-## 🗄 قاعدة البيانات / Database Schema
+## 🗄 Database Schema
 
 ### `groups`
-| Column           | Type      | Notes                                    |
-|------------------|-----------|------------------------------------------|
-| id               | bigint PK |                                          |
-| uuid             | string    | Unique — used in shareable URL           |
-| name             | string    | Group display name                       |
-| max_participants | int       | Maximum allowed participants             |
-| max_gift_price   | int?      | Optional max gift budget (SAR)           |
-| admin_code       | string    | Bcrypt hashed admin password             |
-| is_locked        | boolean   | Locks new registrations                  |
-| is_drawn         | boolean   | True after draw is executed              |
-| created_at/updated_at | timestamp |                                     |
+| Column            | Type       | Notes                               |
+|-------------------|------------|-------------------------------------|
+| id                | bigint PK  |                                     |
+| uuid              | string     | Unique — used in the shareable URL  |
+| name              | string     | Group display name                  |
+| max_participants  | int        | Maximum allowed participants        |
+| max_gift_price    | int?       | Optional max gift budget (SAR)      |
+| admin_code        | string     | Bcrypt hashed admin password        |
+| is_locked         | boolean    | Locks new registrations             |
+| is_drawn          | boolean    | True after draw is executed         |
+| created_at/updated_at | timestamp |                                 |
 
 ### `participants`
-| Column          | Type      | Notes                                         |
-|-----------------|-----------|-----------------------------------------------|
-| id              | bigint PK |                                               |
-| group_id        | bigint FK | → groups.id                                   |
-| name            | string    | Full name                                     |
-| phone_number    | string    | Saudi mobile (unique per group)               |
-| interests       | JSON      | Up to 3 selected interest keys                |
-| assigned_to_id  | bigint FK | → participants.id (null until draw)           |
-| created_at/updated_at | timestamp |                                         |
+| Column          | Type       | Notes                                      |
+|-----------------|------------|--------------------------------------------|
+| id              | bigint PK  |                                            |
+| group_id        | bigint FK  | → groups.id                                |
+| name            | string     | Full name                                  |
+| phone_number    | string     | Saudi mobile (unique per group)            |
+| interests       | JSON       | Up to 3 selected interest keys             |
+| assigned_to_id  | bigint FK  | → participants.id (null until draw)        |
+| created_at/updated_at | timestamp |                                      |
 
 ---
 
-## 🎯 خوارزمية القرعة / Draw Algorithm
+## 🎯 Draw Algorithm
 
 **Circular Permutation (Derangement):**
 
-1. يتم خلط المشتركين عشوائياً
-2. كل مشترك `[i]` يهدي المشترك `[i+1]`، والأخير يهدي الأول
-3. ✅ لا أحد يهدي نفسه
-4. ✅ لا حلقات مغلقة بين شخصين فقط (للمجموعات > 2)
+1. Participants array is shuffled randomly
+2. Each participant `[i]` gives to `[i+1]`; the last gives to `[0]`
+3. ✅ No one draws themselves
+4. ✅ No two-person closed loops (for groups > 2)
 
 ---
 
-## 📱 رسالة الواتساب / WhatsApp Message
+## 📱 WhatsApp Message Template
 
-بعد تنفيذ القرعة، يظهر زر لكل مشترك في لوحة المشرف يفتح الواتساب مع هذه الرسالة:
+After the draw, the admin clicks a button per participant to open WhatsApp with this pre-filled message:
 
 ```
-مرحباً [اسم المهدي]،
-أنت ضمن قرعة "[اسم المجموعة]" لتبادل الهدايا 🎁
+Hello [Giver Name],
+You are part of the "[Group Name]" gift exchange 🎁
 
-الشخص الذي ستهديه:
-[اسم المهدى إليه]
+The person you'll be gifting:
+[Receiver Name]
 
-اهتماماته:
-- [اهتمام 1]
-- [اهتمام 2]
+Their interests:
+- [Interest 1]
+- [Interest 2]
 
-⚠️ الحد الأقصى لسعر الهدية: [المبلغ] ريال   ← يظهر فقط إذا حُدد
+⚠️ Max gift price: [Amount] SAR   ← only shown if set
 
-جهّز له هدية قبل العيد 🌙
+Prepare their gift before Eid! 🌙
 ```
 
 ---
 
-## 🎁 فئات الاهتمامات / Gift Interest Categories
+## 🎁 Gift Interest Categories
 
-| Key          | عربي                    | English                  |
-|--------------|--------------------------|--------------------------|
-| books        | 📚 الكتب                 | 📚 Books                 |
-| electronics  | 📱 الإلكترونيات والأجهزة | 📱 Electronics & Gadgets |
-| sports       | 🏋️ الرياضة واللياقة      | 🏋️ Sports & Fitness      |
-| fashion      | 👗 الموضة والإكسسوارات   | 👗 Fashion & Accessories |
-| home         | 🏠 المنزل والمطبخ        | 🏠 Home & Kitchen        |
-| games        | 🎮 الألعاب والترفيه      | 🎮 Games & Entertainment |
-| beauty       | 💄 التجميل والعناية      | 💄 Beauty & Skincare     |
-| travel       | ✈️ السفر والمغامرة       | ✈️ Travel & Outdoor      |
-| art          | 🎨 الفن والأشغال اليدوية | 🎨 Art & Crafts          |
-| food         | 🍫 الطعام والحلويات      | 🍫 Food & Sweets         |
+| Key          | English                  |
+|--------------|--------------------------|
+| books        | 📚 Books                 |
+| electronics  | 📱 Electronics & Gadgets |
+| sports       | 🏋️ Sports & Fitness      |
+| fashion      | 👗 Fashion & Accessories |
+| home         | 🏠 Home & Kitchen        |
+| games        | 🎮 Games & Entertainment |
+| beauty       | 💄 Beauty & Skincare     |
+| travel       | ✈️ Travel & Outdoor      |
+| art          | 🎨 Art & Crafts          |
+| food         | 🍫 Food & Sweets         |
 
 ---
 
-## ⚙️ متغيرات البيئة / Environment Variables
+## ⚙️ Environment Variables
 
 ```env
 APP_NAME=Tahadou
 APP_ENV=production
 APP_KEY=                    # php artisan key:generate
 APP_DEBUG=false
-APP_URL=https://tahadou.nit.sa
+APP_URL=https://tahadou.example.com
 APP_LOCALE=ar               # ar | en
 
 DB_CONNECTION=mysql
@@ -172,7 +170,7 @@ QUEUE_CONNECTION=database
 
 ---
 
-## ☸️ النشر على k3s / Deploying on k3s
+## ☸️ Deploying on k3s
 
 ```bash
 # Create namespace
@@ -193,7 +191,7 @@ kubectl rollout status deployment/tahadou -n tahadou
 
 ---
 
-## 🏗 هيكل المشروع / Project Structure
+## 🏗 Project Structure
 
 ```
 app/
@@ -203,7 +201,7 @@ app/
 │   │   ├── AdminController.php        # Dashboard, draw, WhatsApp
 │   │   └── ParticipantController.php  # Registration
 │   ├── Middleware/
-│   │   └── SetLocale.php              # ar/en session-based locale
+│   │   └── SetLocale.php              # Session-based ar/en locale
 │   └── Requests/                      # Validated form requests
 ├── Models/
 │   ├── Group.php
@@ -212,25 +210,23 @@ app/
     └── DrawService.php                # Circular permutation algorithm
 
 lang/
-├── ar/app.php                         # Arabic translations
-├── ar/validation.php
-├── en/app.php                         # English translations
-└── en/validation.php
+├── ar/app.php + validation.php        # Arabic translations
+└── en/app.php + validation.php        # English translations
 
 resources/views/
 ├── layouts/app.blade.php              # RTL/LTR layout + lang switcher
 ├── home.blade.php                     # Landing page
-├── group/created.blade.php            # Post-creation (link + admin code)
+├── group/created.blade.php            # Post-creation page
 ├── admin/
 │   ├── login.blade.php
-│   └── dashboard.blade.php            # Full admin panel
+│   └── dashboard.blade.php
 └── participant/
     ├── register.blade.php
     ├── success.blade.php
     └── closed.blade.php
 
 k8s/
-├── deployment.yaml                    # App + queue worker (2 replicas)
+├── deployment.yaml                    # App + queue worker
 ├── service.yaml
 └── ingress.yaml                       # Cloudflare-ready
 ```
@@ -239,4 +235,4 @@ k8s/
 
 ## 📄 License
 
-Private project — Built with ❤️ by [Muath Aljohani](https://moath.co)
+Private — Built with ❤️ by [Muath Aljohani](https://moath.co)
