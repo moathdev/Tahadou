@@ -142,7 +142,11 @@
                                 ->map(fn($k) => strip_tags(__("app.interest_{$k}")))
                                 ->implode("\n- ");
 
-                            $waMsg = implode("\n", [
+                            $priceNote = $group->max_gift_price
+                                ? "⚠️ الحد الأقصى لسعر الهدية: " . number_format($group->max_gift_price) . " ريال"
+                                : null;
+
+                            $lines = [
                                 "مرحباً {$participant->name}،",
                                 "أنت ضمن قرعة \"{$group->name}\" لتبادل الهدايا 🎁",
                                 "",
@@ -152,8 +156,11 @@
                                 "اهتماماته:",
                                 "- {$receiverInterests}",
                                 "",
-                                "جهّز له هدية قبل العيد 🌙",
-                            ]);
+                            ];
+                            if ($priceNote) $lines[] = $priceNote;
+                            $lines[] = "جهّز له هدية قبل العيد 🌙";
+
+                            $waMsg = implode("\n", $lines);
 
                             $waUrl = 'https://api.whatsapp.com/send?phone=' . $waPhone . '&text=' . rawurlencode($waMsg);
                         @endphp
