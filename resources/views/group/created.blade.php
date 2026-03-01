@@ -35,10 +35,17 @@
     <!-- Admin Code -->
     <div class="bg-amber-50 rounded-2xl border border-amber-200 p-6 mb-5">
         <h2 class="text-sm font-semibold text-amber-700 uppercase tracking-wide mb-1">{{ __('app.admin_code_heading') }}</h2>
-        <p class="text-xs text-amber-600 mb-3">{{ __('app.admin_code_warning') }}</p>
-        <div class="text-3xl font-mono font-bold text-amber-800 tracking-widest text-center py-3 bg-white rounded-xl border border-amber-200">
-            {{ $adminCode }}
-        </div>
+        @if($adminCode)
+            <p class="text-xs text-amber-600 mb-3">{{ __('app.admin_code_warning') }}</p>
+            <div class="text-3xl font-mono font-bold text-amber-800 tracking-widest text-center py-3 bg-white rounded-xl border border-amber-200">
+                {{ $adminCode }}
+            </div>
+        @else
+            <p class="text-xs text-red-600 mb-3">{{ __('app.admin_code_gone') }}</p>
+            <div class="text-center py-3 bg-white rounded-xl border border-red-200 text-red-400 text-sm">
+                {{ __('app.admin_code_gone_hint') }}
+            </div>
+        @endif
     </div>
 
     <!-- Admin Dashboard Link -->

@@ -19,7 +19,7 @@ class GroupController extends Controller
     }
 
     /**
-     * Create a new group and return the shareable link + admin code.
+     * Create a new group then redirect to show page (PRG pattern).
      */
     public function create(CreateGroupRequest $request)
     {
@@ -33,10 +33,23 @@ class GroupController extends Controller
             'admin_lookup'     => hash('sha256', strtoupper($rawAdminCode)),
         ]);
 
+        // Flash admin code once — consumed on next request only
+        session()->flash('admin_code', $rawAdminCode);
+
+        return redirect()->route('group.show', ['uuid' => $group->uuid]);
+    }
+
+    /**
+     * Show created group details (GET — safe to refresh).
+     */
+    public function show(string $uuid)
+    {
+        $group = Group::where('uuid', $uuid)->firstOrFail();
+
         return view('group.created', [
-            'group'          => $group,
-            'shareableLink'  => route('participant.register', ['uuid' => $group->uuid]),
-            'adminCode'      => $rawAdminCode,
+            'group'         => $group,
+            'shareableLink' => route('participant.register', ['uuid' => $group->uuid]),
+            'adminCode'     => session('admin_code'), // null if page was refreshed
         ]);
     }
 }

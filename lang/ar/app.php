@@ -38,6 +38,8 @@ return [
     'reg_link_hint'          => 'شارك هذا الرابط مع أعضاء مجموعتك:',
     'admin_code_heading'     => '🔑 كود المشرف',
     'admin_code_warning'     => '⚠️ احفظه الآن — لن يُعرض مرة أخرى.',
+    'admin_code_gone'        => '⚠️ تم عرض كود المشرف مرة واحدة فقط عند الإنشاء.',
+    'admin_code_gone_hint'   => 'إذا فقدت الكود، تواصل مع الدعم أو أنشئ مجموعة جديدة.',
     'admin_dashboard_heading'=> '🛠 لوحة تحكم المشرف',
     'go_to_dashboard'        => 'الذهاب إلى اللوحة ←',
     'group_info'             => 'المجموعة: :name · الحد الأقصى: :max مشترك',

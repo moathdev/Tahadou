@@ -26,6 +26,7 @@ Route::get('/lang/{locale}', function (string $locale) {
 */
 Route::get('/', [GroupController::class, 'index'])->name('home');
 Route::post('/groups', [GroupController::class, 'create'])->name('group.create');
+Route::get('/groups/{uuid}', [GroupController::class, 'show'])->name('group.show');
 
 /*
 |--------------------------------------------------------------------------

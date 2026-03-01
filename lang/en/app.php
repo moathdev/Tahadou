@@ -38,6 +38,8 @@ return [
     'reg_link_hint'          => 'Share this link with your group members:',
     'admin_code_heading'     => '🔑 Your Admin Code',
     'admin_code_warning'     => '⚠️ Save this now — it will not be shown again.',
+    'admin_code_gone'        => '⚠️ The admin code was shown only once when the group was created.',
+    'admin_code_gone_hint'   => 'If you lost the code, please create a new group.',
     'admin_dashboard_heading'=> '🛠 Admin Dashboard',
     'go_to_dashboard'        => 'Go to Dashboard →',
     'group_info'             => 'Group: :name · Max participants: :max',
