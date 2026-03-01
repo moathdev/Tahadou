@@ -49,8 +49,9 @@
                     name="phone_number"
                     value="{{ old('phone_number') }}"
                     placeholder="{{ __('app.phone_placeholder') }}"
+                    dir="ltr"
                     required
-                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-violet-400 focus:border-violet-400 outline-none transition text-sm"
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-violet-400 focus:border-violet-400 outline-none transition text-sm text-left"
                 />
                 <p class="text-xs text-gray-400 mt-1">{{ __('app.phone_hint') }}</p>
                 @error('phone_number')

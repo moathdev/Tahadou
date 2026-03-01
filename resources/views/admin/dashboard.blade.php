@@ -124,7 +124,7 @@
 
                             {{-- Phone --}}
                             <p class="text-xs text-gray-500 mt-1">
-                                📱 {{ $participant->phone_number }}
+                                📱 <span dir="ltr">{{ $participant->phone_number }}</span>
                             </p>
 
                             {{-- Interests --}}

@@ -74,7 +74,7 @@ return [
     'name_label'          => 'الاسم الكامل',
     'name_placeholder'    => 'اسمك الكامل',
     'phone_label'         => 'رقم الواتساب',
-    'phone_placeholder'   => 'مثال: 966 5X XXX XXXX+',
+    'phone_placeholder'   => '0512345678',
     'phone_hint'          => 'ستصلك رسالة واتساب بتفاصيل هديتك يوم القرعة.',
     'interests_label'     => 'اهتمامات الهدايا',
     'interests_hint_count'=> '(اختر حتى 3)',
