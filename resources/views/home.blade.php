@@ -99,5 +99,18 @@
             <p class="text-xs text-gray-500">{{ __('app.how_draw') }}</p>
         </div>
     </div>
+
+    <!-- Hadith Section -->
+    <div class="mt-10 bg-violet-50 border border-violet-100 rounded-2xl p-6 text-{{ app()->getLocale() === 'ar' ? 'right' : 'left' }}">
+        <h3 class="text-lg font-bold text-violet-800 mb-2">{{ __('app.hadith_section_title') }}</h3>
+        <p class="text-sm text-gray-600 mb-4 leading-relaxed">{{ __('app.hadith_intro') }}</p>
+        <p class="text-sm font-semibold text-violet-700 mb-2">{{ __('app.hadith_aspects_title') }}</p>
+        <ul class="text-sm text-gray-600 space-y-1">
+            <li><span class="font-medium text-gray-700">{{ __('app.hadith_meaning_label') }}</span> {{ __('app.hadith_meaning') }}</li>
+            <li><span class="font-medium text-gray-700">{{ __('app.hadith_purpose_label') }}</span> {{ __('app.hadith_purpose') }}</li>
+            <li><span class="font-medium text-gray-700">{{ __('app.hadith_gift_label') }}</span> {{ __('app.hadith_gift') }}</li>
+            <li><span class="font-medium text-gray-700">{{ __('app.hadith_examples_label') }}</span> {{ __('app.hadith_examples') }}</li>
+        </ul>
+    </div>
 </div>
 @endsection

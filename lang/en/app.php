@@ -119,6 +119,19 @@ return [
     'interest_art'         => '🎨 Art & Crafts',
     'interest_food'        => '🍫 Food & Sweets',
 
+    // Hadith Section (Homepage)
+    'hadith_section_title' => '"Tahadou Tahabbu"',
+    'hadith_intro'         => 'A noble Prophetic hadith urging the exchange of gifts as a means to spread love, affection, and to remove resentment between people. A gift — no matter how small — brings hearts closer together and is a Sunnah of the Prophet ﷺ for deepening relationships. Reported by Al-Bukhari in "Al-Adab Al-Mufrad" with a good chain of narration.',
+    'hadith_aspects_title' => 'Key aspects of the hadith:',
+    'hadith_meaning_label' => 'Meaning:',
+    'hadith_meaning'       => 'Exchange gifts, and Allah will grant you love and affection for one another.',
+    'hadith_purpose_label' => 'Purpose:',
+    'hadith_purpose'       => 'To dispel hatred, cleanse hearts, and build social bonds.',
+    'hadith_gift_label'    => 'The gift:',
+    'hadith_gift'          => 'Its value lies not in its price, but in the thought and affection it carries.',
+    'hadith_examples_label'=> 'Examples of gifts:',
+    'hadith_examples'      => 'A sincere supplication (du\'a), a kind word, or a small token when meeting family and friends.',
+
     // Closed Page
     'closed_draw_title'   => 'Draw Already Done!',
     'closed_draw_body'    => 'The draw is complete! 🎉 Check your WhatsApp to find out who you\'ll be gifting.',
