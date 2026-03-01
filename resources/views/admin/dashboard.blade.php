@@ -111,7 +111,7 @@
                             <div class="flex items-center gap-2 flex-wrap">
                                 <p class="font-semibold text-gray-800">{{ $participant->name }}</p>
                                 @if($group->is_drawn && $participant->assignedTo)
-                                    <span class="text-xs px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-medium">
+                                    <span dir="ltr" class="text-xs px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-medium">
                                         🎁 → {{ $participant->assignedTo->name }}
                                     </span>
                                 @endif
