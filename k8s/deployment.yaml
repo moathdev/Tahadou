@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tahadou
+  labels:
+    app: tahadou
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tahadou
+  template:
+    metadata:
+      labels:
+        app: tahadou
+    spec:
+      containers:
+        - name: tahadou
+          image: your-registry/tahadou:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          env:
+            - name: APP_ENV
+              value: production
+            - name: APP_DEBUG
+              value: "false"
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: tahadou-secrets
+                  key: APP_KEY
+            - name: DB_HOST
+              value: mysql-service
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_DATABASE
+              value: tahadou
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: tahadou-secrets
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tahadou-secrets
+                  key: DB_PASSWORD
+            - name: QUEUE_CONNECTION
+              value: database
+            - name: WHATSAPP_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: tahadou-secrets
+                  key: WHATSAPP_API_URL
+            - name: WHATSAPP_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: tahadou-secrets
+                  key: WHATSAPP_API_TOKEN
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 5
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tahadou-queue
+  labels:
+    app: tahadou-queue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tahadou-queue
+  template:
+    metadata:
+      labels:
+        app: tahadou-queue
+    spec:
+      containers:
+        - name: queue-worker
+          image: your-registry/tahadou:latest
+          imagePullPolicy: Always
+          command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--max-time=3600"]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          env:
+            - name: APP_ENV
+              value: production
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: tahadou-secrets
+                  key: APP_KEY
+            - name: DB_HOST
+              value: mysql-service
+            - name: DB_DATABASE
+              value: tahadou
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: tahadou-secrets
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tahadou-secrets
+                  key: DB_PASSWORD
+            - name: QUEUE_CONNECTION
+              value: database
+            - name: WHATSAPP_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: tahadou-secrets
+                  key: WHATSAPP_API_URL
+            - name: WHATSAPP_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: tahadou-secrets
+                  key: WHATSAPP_API_TOKEN

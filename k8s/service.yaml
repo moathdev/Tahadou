@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tahadou-service
+  labels:
+    app: tahadou
+spec:
+  type: ClusterIP
+  selector:
+    app: tahadou
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

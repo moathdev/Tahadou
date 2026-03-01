@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tahadou-ingress
+  annotations:
+    # Cloudflare handles TLS — traffic inside cluster is plain HTTP
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # Rate limiting to combat bots (supplement to Cloudflare WAF)
+    nginx.ingress.kubernetes.io/limit-rps: "20"
+    nginx.ingress.kubernetes.io/limit-connections: "10"
+    # Proxy body size for potential future file uploads
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: tahadou.nit.sa
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tahadou-service
+                port:
+                  number: 80
+  # TLS is terminated at Cloudflare; uncomment below if terminating inside cluster
+  # tls:
+  #   - hosts:
+  #       - tahadou.nit.sa
+  #     secretName: tahadou-tls
