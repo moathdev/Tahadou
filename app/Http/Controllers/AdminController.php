@@ -111,9 +111,9 @@ class AdminController extends Controller
     }
 
     /**
-     * Download draw results as Excel (CSV).
+     * Download draw results as XLSX (RTL, WhatsApp links, message text).
      */
-    public function downloadExcel(string $uuid): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function downloadExcel(string $uuid): \Illuminate\Http\Response
     {
         $this->requireAuth($uuid);
 
@@ -123,42 +123,100 @@ class AdminController extends Controller
 
         $participants = $group->participants()->with('assignedTo')->get();
 
-        $filename = 'draw-' . str($group->name)->slug() . '-' . now()->format('Y-m-d') . '.csv';
+        $xlsx = new \App\Services\XlsxExporter();
 
-        return response()->streamDownload(function () use ($participants) {
-            $handle = fopen('php://output', 'w');
-
-            // UTF-8 BOM so Excel opens Arabic correctly
-            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
-
-            // Header row
-            fputcsv($handle, [
-                'المُهدِي',
-                'رقم الجوال',
-                'الاهتمامات',
-                'سيُهدي إلى',
-                'جوال المُهدَى إليه',
-            ]);
-
-            foreach ($participants as $p) {
-                $interests = collect($p->interests ?? [])
-                    ->map(fn ($key) => __("app.interest_{$key}"))
-                    ->implode(' | ');
-
-                fputcsv($handle, [
-                    $p->name,
-                    $p->phone_number,
-                    $interests,
-                    $p->assignedTo?->name ?? '—',
-                    $p->assignedTo?->phone_number ?? '—',
-                ]);
-            }
-
-            fclose($handle);
-        }, $filename, [
-            'Content-Type'        => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        // Header row
+        $xlsx->addRow([
+            'المهدي',
+            'رقم الجوال',
+            'الاهتمامات',
+            'سيهدي إلى',
+            'جوال المهدى إليه',
+            'اضغط وأرسل',
+            'النص المرسل',
         ]);
+
+        foreach ($participants as $p) {
+            $receiver = $p->assignedTo;
+
+            // Interests — no emojis
+            $interests = collect($p->interests ?? [])
+                ->map(fn ($key) => $this->stripEmoji(__("app.interest_{$key}")))
+                ->implode(' | ');
+
+            // Receiver interests for the message
+            $receiverInterests = collect($receiver?->interests ?? [])
+                ->map(fn ($key) => $this->stripEmoji(__("app.interest_{$key}")))
+                ->implode("\n- ");
+
+            // WhatsApp phone (international, no +)
+            $waPhone = $this->toWaPhone($p->phone_number);
+
+            // Message text
+            $message = $this->buildMessage($group->name, $p->name, $receiver?->name, $receiverInterests);
+
+            // WhatsApp URL
+            $waUrl = 'https://api.whatsapp.com/send?phone=' . $waPhone
+                . '&text=' . rawurlencode($message);
+
+            $xlsx->addRow([
+                $p->name,
+                $p->phone_number,
+                $interests,
+                $receiver?->name ?? '—',
+                $receiver?->phone_number ?? '—',
+                ['value' => 'ارسل رسالة', 'url' => $waUrl],
+                $message,
+            ]);
+        }
+
+        $content  = $xlsx->generate();
+        $filename = 'draw-' . str($group->name)->slug() . '-' . now()->format('Y-m-d') . '.xlsx';
+
+        return response($content, 200, [
+            'Content-Type'        => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Cache-Control'       => 'no-cache',
+        ]);
+    }
+
+    /** Format phone for WhatsApp API (966XXXXXXXXX) */
+    private function toWaPhone(string $phone): string
+    {
+        $digits = preg_replace('/\D/', '', $phone);
+        if (str_starts_with($digits, '00')) {
+            return substr($digits, 2);
+        }
+        if (str_starts_with($digits, '0')) {
+            return '966' . substr($digits, 1);
+        }
+        return $digits;
+    }
+
+    /** Strip emoji/symbols from a string */
+    private function stripEmoji(string $text): string
+    {
+        return trim(preg_replace('/[\x{1F000}-\x{1FFFF}]|[\x{2600}-\x{27FF}]|\x{FE0F}/u', '', $text));
+    }
+
+    /** Build the WhatsApp message text */
+    private function buildMessage(string $groupName, string $giverName, ?string $receiverName, string $receiverInterests): string
+    {
+        $receiver  = $receiverName  ?? '—';
+        $interests = $receiverInterests ?: '—';
+
+        return <<<MSG
+        مرحباً {$giverName}،
+        أنت ضمن قرعة "{$groupName}" لتبادل الهدايا 🎁
+        
+        الشخص الذي ستهديه:
+        {$receiver}
+        
+        اهتماماته:
+        - {$interests}
+        
+        جهّز له هدية قبل العيد 🌙
+        MSG;
     }
 
     /**
