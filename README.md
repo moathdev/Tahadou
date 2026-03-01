@@ -278,4 +278,4 @@ k8s/
 
 ## 📄 License
 
-Private — Built with ❤️ by [Muath Aljohani](https://moath.co)
+MIT — Built with ❤️ by [Muath Aljohani](https://moath.co)
