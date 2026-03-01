@@ -53,6 +53,7 @@ return [
     'status_locked'       => '🔒 Registration Locked',
     'status_open'         => '🟢 Registration Open',
     'stat_registered'     => 'Registered',
+    'stat_participants'   => 'Participants',
     'stat_max'            => 'Max',
     'stat_remaining'      => 'Remaining',
     'draw_success'          => '🎁 Draw executed! You can now send messages to participants.',

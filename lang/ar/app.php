@@ -53,6 +53,7 @@ return [
     'status_locked'       => '🔒 التسجيل مغلق',
     'status_open'         => '🟢 التسجيل مفتوح',
     'stat_registered'     => 'مسجّل',
+    'stat_participants'   => 'مشترك',
     'stat_max'            => 'الحد الأقصى',
     'stat_remaining'      => 'المتبقي',
     'draw_success'          => '🎁 تمت القرعة! يمكنك الآن إرسال الرسائل للمشتركين.',
