@@ -6,6 +6,8 @@ return [
     'app_name'        => 'Tahadou',
     'tagline'         => 'Eid Gift Exchange',
     'footer'          => 'Built with ❤️ by',
+    'footer_author'   => 'Muath Aljohani',
+    'footer_url'      => 'https://moath.co',
     'copy_btn'        => 'Copy',
     'copied'          => '✅ Copied!',
     'create_your_own' => 'Create Your Own Group →',
@@ -85,6 +87,18 @@ return [
     'success_step3'       => '📱 You\'ll get a WhatsApp message with your assignment',
     'success_step4'       => '🎁 Prepare a thoughtful gift before Eid!',
     'success_greeting'    => 'عيد مبارك وكل عام وأنتم بخير 🌙',
+
+    // Gift Interests
+    'interest_books'       => '📚 Books',
+    'interest_electronics' => '📱 Electronics & Gadgets',
+    'interest_sports'      => '🏋️ Sports & Fitness',
+    'interest_fashion'     => '👗 Fashion & Accessories',
+    'interest_home'        => '🏠 Home & Kitchen',
+    'interest_games'       => '🎮 Games & Entertainment',
+    'interest_beauty'      => '💄 Beauty & Skincare',
+    'interest_travel'      => '✈️ Travel & Outdoor',
+    'interest_art'         => '🎨 Art & Crafts',
+    'interest_food'        => '🍫 Food & Sweets',
 
     // Closed Page
     'closed_draw_title'   => 'Draw Already Executed',

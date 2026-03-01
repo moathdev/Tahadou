@@ -16,19 +16,19 @@ return [
     |--------------------------------------------------------------------------
     | Predefined Gift Interest Categories
     |--------------------------------------------------------------------------
-    | Key => Display Label
+    | Keys only — labels live in lang/{locale}/app.php as interest_{key}
     */
     'interests' => [
-        'books'       => '📚 Books',
-        'electronics' => '📱 Electronics & Gadgets',
-        'sports'      => '🏋️ Sports & Fitness',
-        'fashion'     => '👗 Fashion & Accessories',
-        'home'        => '🏠 Home & Kitchen',
-        'games'       => '🎮 Games & Entertainment',
-        'beauty'      => '💄 Beauty & Skincare',
-        'travel'      => '✈️ Travel & Outdoor',
-        'art'         => '🎨 Art & Crafts',
-        'food'        => '🍫 Food & Sweets',
+        'books',
+        'electronics',
+        'sports',
+        'fashion',
+        'home',
+        'games',
+        'beauty',
+        'travel',
+        'art',
+        'food',
     ],
 
 ];

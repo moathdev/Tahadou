@@ -81,7 +81,8 @@
     </main>
 
     <footer class="mt-16 py-6 text-center text-xs text-gray-400 border-t border-gray-100">
-        {{ __('app.app_name') }} © {{ date('Y') }} — {{ __('app.footer') }} <a href="https://nit.sa" class="text-violet-500 hover:underline">NIT</a>
+        {{ __('app.app_name') }} © {{ date('Y') }} — {{ __('app.footer') }}
+        <a href="{{ __('app.footer_url') }}" class="text-violet-500 hover:underline">{{ __('app.footer_author') }}</a>
     </footer>
 
     @stack('scripts')

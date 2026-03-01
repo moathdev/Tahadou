@@ -19,26 +19,30 @@ class RegisterParticipantRequest extends FormRequest
         $groupId = $group?->id;
 
         return [
-            'name'         => ['required', 'string', 'min:2', 'max:100'],
+            // At least 3 characters, letters/spaces/Arabic only (no single-char tricks)
+            'name'         => ['required', 'string', 'min:3', 'max:100', 'regex:/^[\p{L}\s\-\.]+$/u'],
             'phone_number' => [
                 'required',
                 'string',
-                'regex:/^[0-9\+\-\s]{7,20}$/',
+                // Saudi mobile: 05XXXXXXXX or +9665XXXXXXXX or 9665XXXXXXXX
+                'regex:/^(\+?966|0)5[0-9]{8}$/',
                 Rule::unique('participants', 'phone_number')
                     ->where('group_id', $groupId),
             ],
             'interests'    => ['required', 'array', 'min:1', 'max:3'],
-            'interests.*'  => ['string', Rule::in(array_keys(config('tahadou.interests')))],
+            'interests.*'  => ['string', Rule::in(config('tahadou.interests'))],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'phone_number.unique'  => 'This phone number is already registered in this group.',
-            'phone_number.regex'   => 'Please enter a valid phone number.',
-            'interests.min'        => 'Please select at least 1 interest.',
-            'interests.max'        => 'You can select up to 3 interests.',
+            'name.min'             => __('validation.custom.name.min'),
+            'name.regex'           => __('validation.custom.name.regex'),
+            'phone_number.unique'  => __('validation.custom.phone_number.unique'),
+            'phone_number.regex'   => __('validation.custom.phone_number.regex'),
+            'interests.min'        => __('validation.custom.interests.min'),
+            'interests.max'        => __('validation.custom.interests.max'),
         ];
     }
 }

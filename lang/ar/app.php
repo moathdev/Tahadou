@@ -3,9 +3,11 @@
 return [
 
     // General
-    'app_name'        => 'تهادوا',
-    'tagline'         => 'تبادل هدايا العيد',
+    'app_name'        => 'تهادوا تحابوا',
+    'tagline'         => 'تبادل هدايا العيد بكل محبة',
     'footer'          => 'صُنع بـ ❤️ من قِبل',
+    'footer_author'   => 'Muath Aljohani',
+    'footer_url'      => 'https://moath.co',
     'copy_btn'        => 'نسخ',
     'copied'          => '✅ تم النسخ!',
     'create_your_own' => 'أنشئ مجموعتك الخاصة ←',
@@ -85,6 +87,18 @@ return [
     'success_step3'       => '📱 ستصلك رسالة واتساب بتفاصيل هديتك',
     'success_step4'       => '🎁 جهّز هديتك قبل العيد!',
     'success_greeting'    => 'عيد مبارك وكل عام وأنتم بخير 🌙',
+
+    // Gift Interests
+    'interest_books'       => '📚 الكتب',
+    'interest_electronics' => '📱 الإلكترونيات والأجهزة',
+    'interest_sports'      => '🏋️ الرياضة واللياقة',
+    'interest_fashion'     => '👗 الموضة والإكسسوارات',
+    'interest_home'        => '🏠 المنزل والمطبخ',
+    'interest_games'       => '🎮 الألعاب والترفيه',
+    'interest_beauty'      => '💄 التجميل والعناية',
+    'interest_travel'      => '✈️ السفر والمغامرة',
+    'interest_art'         => '🎨 الفن والأشغال اليدوية',
+    'interest_food'        => '🍫 الطعام والحلويات',
 
     // Closed Page
     'closed_draw_title'   => 'تمت القرعة بالفعل',

@@ -67,7 +67,7 @@
                 <p class="text-xs text-gray-400 mb-3">{{ __('app.interests_hint') }}</p>
 
                 <div class="grid grid-cols-2 gap-2" id="interests-grid">
-                    @foreach($interests as $key => $label)
+                    @foreach($interests as $key)
                     <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-violet-300 hover:bg-violet-50 transition interest-option {{ in_array($key, old('interests', [])) ? 'border-violet-400 bg-violet-50' : '' }}">
                         <input
                             type="checkbox"
@@ -76,7 +76,7 @@
                             {{ in_array($key, old('interests', [])) ? 'checked' : '' }}
                             class="interest-checkbox accent-violet-600"
                         />
-                        <span class="text-sm">{{ $label }}</span>
+                        <span class="text-sm">{{ __('app.interest_' . $key) }}</span>
                     </label>
                     @endforeach
                 </div>

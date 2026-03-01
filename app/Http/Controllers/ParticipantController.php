@@ -27,6 +27,7 @@ class ParticipantController extends Controller
             return view('participant.closed', ['reason' => 'full', 'group' => $group]);
         }
 
+        // Pass interest keys — labels are resolved in the view via __()
         $interests = config('tahadou.interests');
 
         return view('participant.register', compact('group', 'interests'));

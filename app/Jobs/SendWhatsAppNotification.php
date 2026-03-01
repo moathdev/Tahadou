@@ -30,7 +30,7 @@ class SendWhatsAppNotification implements ShouldQueue
         $receiver = Participant::with('group')->findOrFail($this->receiverId);
 
         $interestsList = collect($receiver->interests)
-            ->map(fn ($key) => config("tahadou.interests.{$key}", $key))
+            ->map(fn ($key) => __("app.interest_{$key}"))
             ->implode(', ');
 
         $message = $this->buildMessage($giver, $receiver, $interestsList);
