@@ -229,11 +229,43 @@
         return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     }
 
+    function saveSent(arr) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    }
+
     function markSent(btn) {
         btn.classList.remove('bg-green-500', 'hover:bg-green-600');
-        btn.classList.add('bg-gray-300', 'text-gray-600', 'pointer-events-none', 'cursor-default');
+        btn.classList.add('bg-gray-200', 'text-gray-500', 'pointer-events-none', 'cursor-default');
         btn.querySelector('.btn-label').textContent = btn.dataset.labelSent;
-        btn.querySelector('svg').style.opacity = '0.5';
+        btn.querySelector('svg').style.opacity = '0.4';
+
+        // Add resend button if not already there
+        if (!btn.nextElementSibling || !btn.nextElementSibling.classList.contains('wa-resend-btn')) {
+            const resend = document.createElement('button');
+            resend.type = 'button';
+            resend.className = 'wa-resend-btn ms-1 shrink-0 px-2 py-1.5 rounded-lg border border-gray-300 text-gray-500 hover:border-green-400 hover:text-green-600 text-xs transition';
+            resend.textContent = '↺ إعادة إرسال';
+            resend.addEventListener('click', function () {
+                resetBtn(btn);
+            });
+            btn.insertAdjacentElement('afterend', resend);
+        }
+    }
+
+    function resetBtn(btn) {
+        // Remove sent state visually
+        btn.classList.add('bg-green-500', 'hover:bg-green-600');
+        btn.classList.remove('bg-gray-200', 'text-gray-500', 'pointer-events-none', 'cursor-default');
+        btn.querySelector('.btn-label').textContent = btn.dataset.labelDefault;
+        btn.querySelector('svg').style.opacity = '1';
+
+        // Remove resend button
+        const resend = btn.nextElementSibling;
+        if (resend && resend.classList.contains('wa-resend-btn')) resend.remove();
+
+        // Remove from localStorage
+        const sent = getSent().filter(id => id !== btn.dataset.participantId);
+        saveSent(sent);
     }
 
     // Restore sent state on page load
@@ -249,7 +281,7 @@
             const sent = getSent();
             if (!sent.includes(id)) {
                 sent.push(id);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(sent));
+                saveSent(sent);
             }
             markSent(this);
         });
