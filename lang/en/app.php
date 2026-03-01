@@ -5,6 +5,7 @@ return [
     // General
     'app_name'        => 'Tahadou',
     'tagline'         => 'Eid Gift Exchange',
+    'admin_login'     => 'Admin',
     'footer'          => 'Built with ❤️ by',
     'footer_author'   => 'Muath Aljohani',
     'footer_url'      => 'https://moath.co',

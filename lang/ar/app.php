@@ -5,6 +5,7 @@ return [
     // General
     'app_name'        => 'تهادوا تحابوا',
     'tagline'         => 'تبادل هدايا العيد بكل محبة',
+    'admin_login'     => 'المشرف',
     'footer'          => 'صُنع بـ ❤️ من قِبل',
     'footer_author'   => 'Muath Aljohani',
     'footer_url'      => 'https://moath.co',

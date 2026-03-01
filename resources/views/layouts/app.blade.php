@@ -49,12 +49,19 @@
                 🎁 <span>{{ __('app.app_name') }}</span>
             </a>
             <div class="flex items-center gap-3">
-                <span class="text-sm text-gray-400">{{ __('app.tagline') }}</span>
+                <span class="text-sm text-gray-400 hidden sm:inline">{{ __('app.tagline') }}</span>
                 <a
                     href="{{ route('lang.switch', $otherLocale) }}"
                     class="text-xs px-2 py-1 rounded-lg bg-violet-100 text-violet-600 hover:bg-violet-200 transition font-medium"
                 >
                     {{ $otherLabel }}
+                </a>
+                <a
+                    href="{{ route('admin.login') }}"
+                    class="text-xs px-2 py-1 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700 transition font-medium"
+                    title="{{ __('app.admin_login') }}"
+                >
+                    🔐 {{ __('app.admin_login') }}
                 </a>
             </div>
         </div>
