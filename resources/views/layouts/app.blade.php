@@ -88,8 +88,8 @@
     </main>
 
     <footer class="py-6 text-center text-xs text-gray-400 border-t border-gray-100 mt-auto">
-        تهادوا تحابوا © {{ date('Y') }} — صُنع بـ ❤️ من قِبل
-        <a href="https://moath.co" class="text-violet-500 hover:underline">Muath Aljohani</a>
+        {{ __('app.app_name') }} © {{ date('Y') }} — {{ __('app.footer') }}
+        <a href="{{ __('app.footer_url') }}" class="text-violet-500 hover:underline">{{ __('app.footer_author') }}</a>
     </footer>
 
     @stack('scripts')

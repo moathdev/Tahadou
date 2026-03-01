@@ -105,7 +105,7 @@ return [
     'success_step2'       => '⏳ Wait for the admin to execute the draw',
     'success_step3'       => '📱 You\'ll get a WhatsApp message with your assignment',
     'success_step4'       => '🎁 Prepare a thoughtful gift before Eid!',
-    'success_greeting'    => 'عيد مبارك وكل عام وأنتم بخير 🌙',
+    'success_greeting'    => 'Eid Mubarak — wishing you a blessed Eid! 🌙',
 
     // Gift Interests
     'interest_books'       => '📚 Books',
@@ -118,6 +118,15 @@ return [
     'interest_travel'      => '✈️ Travel & Outdoor',
     'interest_art'         => '🎨 Art & Crafts',
     'interest_food'        => '🍫 Food & Sweets',
+
+    // WhatsApp Message
+    'wa_greeting'         => 'Hello :name,',
+    'wa_intro'            => 'You\'re part of the ":group" gift exchange 🎁',
+    'wa_assigned_label'   => 'You\'re gifting:',
+    'wa_interests_label'  => 'Their interests:',
+    'wa_price_note'       => '⚠️ Max gift price: :price SAR',
+    'wa_closing'          => 'Prepare a thoughtful gift before Eid! 🌙',
+    'btn_resend_whatsapp' => '↺ Resend',
 
     // Hadith Section (Homepage)
     'hadith_section_title' => '"Tahadou Tahabbu"',
