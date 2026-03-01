@@ -125,16 +125,11 @@ class AdminController extends Controller
 
         $xlsx = new \App\Services\XlsxExporter();
 
-        // Header row
-        $xlsx->addRow([
-            'المهدي',
-            'رقم الجوال',
-            'الاهتمامات',
-            'سيهدي إلى',
-            'جوال المهدى إليه',
-            'اضغط وأرسل',
-            'النص المرسل',
-        ]);
+        // Header row — bold
+        $xlsx->addRow(array_map(
+            fn ($h) => ['value' => $h, 'bold' => true],
+            ['المهدي', 'رقم الجوال', 'الاهتمامات', 'سيهدي إلى', 'جوال المهدى إليه', 'اضغط وأرسل', 'النص المرسل']
+        ));
 
         foreach ($participants as $p) {
             $receiver = $p->assignedTo;
@@ -171,15 +166,14 @@ class AdminController extends Controller
         }
 
         $content  = $xlsx->generate();
-        $filename = 'tahadou-draw-' . now()->format('Y-m-d') . '.xlsx';
+        $filename = 'tahadou-draw-' . now()->format('Y-m-d') . '.xls';
 
         return response($content, 200, [
-            'Content-Type'              => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition'       => 'attachment; filename="' . $filename . '"',
-            'Content-Length'            => strlen($content),
-            'Cache-Control'             => 'no-store, no-cache',
-            'Pragma'                    => 'no-cache',
-            'X-Content-Type-Options'    => 'nosniff',
+            'Content-Type'        => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Length'      => strlen($content),
+            'Cache-Control'       => 'no-store, no-cache',
+            'Pragma'              => 'no-cache',
         ]);
     }
 
