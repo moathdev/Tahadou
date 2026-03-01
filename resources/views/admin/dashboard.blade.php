@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard — '. $group->name)
+@section('title', __('app.dashboard_title') . ' — ' . $group->name)
 
 @section('content')
 <div class="max-w-3xl mx-auto">
@@ -8,16 +8,16 @@
     <!-- Header -->
     <div class="flex items-start justify-between mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">🛠 Admin Dashboard</h1>
+            <h1 class="text-2xl font-bold text-gray-800">{{ __('app.dashboard_title') }}</h1>
             <p class="text-gray-500 text-sm mt-1">{{ $group->name }}</p>
         </div>
         <div class="text-right">
             @if($group->is_drawn)
-                <span class="inline-block px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">✅ Draw Executed</span>
+                <span class="inline-block px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">{{ __('app.status_draw_done') }}</span>
             @elseif($group->is_locked)
-                <span class="inline-block px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">🔒 Registration Locked</span>
+                <span class="inline-block px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">{{ __('app.status_locked') }}</span>
             @else
-                <span class="inline-block px-3 py-1 rounded-full bg-violet-100 text-violet-700 text-xs font-semibold">🟢 Registration Open</span>
+                <span class="inline-block px-3 py-1 rounded-full bg-violet-100 text-violet-700 text-xs font-semibold">{{ __('app.status_open') }}</span>
             @endif
         </div>
     </div>
@@ -26,15 +26,15 @@
     <div class="grid grid-cols-3 gap-4 mb-6">
         <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm text-center">
             <div class="text-3xl font-bold text-violet-600">{{ $group->participants_count }}</div>
-            <div class="text-xs text-gray-400 mt-1">Registered</div>
+            <div class="text-xs text-gray-400 mt-1">{{ __('app.stat_registered') }}</div>
         </div>
         <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm text-center">
             <div class="text-3xl font-bold text-amber-500">{{ $group->max_participants }}</div>
-            <div class="text-xs text-gray-400 mt-1">Max</div>
+            <div class="text-xs text-gray-400 mt-1">{{ __('app.stat_max') }}</div>
         </div>
         <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm text-center">
             <div class="text-3xl font-bold text-gray-600">{{ $group->max_participants - $group->participants_count }}</div>
-            <div class="text-xs text-gray-400 mt-1">Remaining</div>
+            <div class="text-xs text-gray-400 mt-1">{{ __('app.stat_remaining') }}</div>
         </div>
     </div>
 
@@ -51,13 +51,16 @@
                         ? 'bg-green-50 border-green-300 text-green-700 hover:bg-green-100'
                         : 'bg-red-50 border-red-300 text-red-700 hover:bg-red-100' }}"
             >
-                {{ $group->is_locked ? '🔓 Unlock Registration' : '🔒 Lock Registration' }}
+                {{ $group->is_locked ? __('app.btn_unlock') : __('app.btn_lock') }}
             </button>
         </form>
 
         <!-- Execute Draw -->
-        <form action="{{ route('admin.draw', $group->uuid) }}" method="POST"
-              onsubmit="return confirm('Execute the draw? This cannot be undone.');">
+        <form
+            action="{{ route('admin.draw', $group->uuid) }}"
+            method="POST"
+            onsubmit="return confirm('{{ __('app.draw_confirm') }}');"
+        >
             @csrf
             <button
                 type="submit"
@@ -67,9 +70,9 @@
                         ? 'bg-violet-600 text-white hover:bg-violet-700 shadow'
                         : 'bg-gray-100 text-gray-400 cursor-not-allowed' }}"
             >
-                🎯 Execute Draw
+                {{ __('app.btn_draw') }}
                 @if($group->participants_count < 3)
-                    <span class="text-xs">(need {{ 3 - $group->participants_count }} more)</span>
+                    <span class="text-xs">{{ __('app.btn_draw_need_more', ['count' => 3 - $group->participants_count]) }}</span>
                 @endif
             </button>
         </form>
@@ -83,12 +86,12 @@
     <!-- Participants List -->
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100">
-            <h2 class="font-semibold text-gray-700">👥 Participants ({{ $group->participants_count }})</h2>
+            <h2 class="font-semibold text-gray-700">{{ __('app.participants_heading', ['count' => $group->participants_count]) }}</h2>
         </div>
 
         @if($participants->isEmpty())
             <div class="px-6 py-10 text-center text-gray-400 text-sm">
-                No participants yet. Share the registration link!
+                {{ __('app.no_participants') }}
             </div>
         @else
             <ul class="divide-y divide-gray-50">
@@ -96,22 +99,19 @@
                 <li class="flex items-center justify-between px-6 py-4">
                     <div>
                         <p class="font-medium text-gray-700">{{ $participant->name }}</p>
-                        <p class="text-xs text-gray-400">Registered {{ $participant->created_at->diffForHumans() }}</p>
+                        <p class="text-xs text-gray-400">{{ __('app.registered_at', ['time' => $participant->created_at->diffForHumans()]) }}</p>
                     </div>
 
                     @if(! $group->is_drawn)
                     <form
                         action="{{ route('admin.participants.remove', [$group->uuid, $participant->id]) }}"
                         method="POST"
-                        onsubmit="return confirm('Remove {{ $participant->name }}?');"
+                        onsubmit="return confirm('{{ __('app.remove_confirm', ['name' => $participant->name]) }}');"
                     >
                         @csrf
                         @method('DELETE')
-                        <button
-                            type="submit"
-                            class="text-xs text-red-400 hover:text-red-600 transition"
-                        >
-                            Remove
+                        <button type="submit" class="text-xs text-red-400 hover:text-red-600 transition">
+                            {{ __('app.remove_btn') }}
                         </button>
                     </form>
                     @endif
@@ -123,7 +123,7 @@
 
     <!-- Registration Link -->
     <div class="mt-6 bg-violet-50 rounded-xl p-4 border border-violet-100">
-        <p class="text-xs text-violet-600 font-medium mb-2">🔗 Registration Link</p>
+        <p class="text-xs text-violet-600 font-medium mb-2">{{ __('app.reg_link_label') }}</p>
         <div class="flex items-center gap-2">
             <code class="flex-1 text-xs text-violet-700 bg-white px-3 py-2 rounded-lg border border-violet-200 truncate">
                 {{ route('participant.register', $group->uuid) }}
@@ -132,7 +132,7 @@
                 onclick="navigator.clipboard.writeText('{{ route('participant.register', $group->uuid) }}')"
                 class="px-3 py-2 bg-violet-600 text-white rounded-lg text-xs hover:bg-violet-700 transition"
             >
-                Copy
+                {{ __('app.copy_btn') }}
             </button>
         </div>
     </div>

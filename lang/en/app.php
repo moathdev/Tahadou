@@ -1,0 +1,97 @@
+<?php
+
+return [
+
+    // General
+    'app_name'        => 'Tahadou',
+    'tagline'         => 'Eid Gift Exchange',
+    'footer'          => 'Built with ❤️ by',
+    'copy_btn'        => 'Copy',
+    'copied'          => '✅ Copied!',
+    'create_your_own' => 'Create Your Own Group →',
+
+    // Landing Page
+    'home_title'           => 'Tahadou — Create a Gift Exchange Group',
+    'home_hero_title'      => 'Tahadou',
+    'home_hero_subtitle'   => 'Organize your Eid gift exchange in minutes.',
+    'create_group_heading' => '🎉 Create a New Group',
+    'group_name_label'     => 'Group Name',
+    'group_name_placeholder' => 'e.g. Al-Johani Family Eid 2025',
+    'max_participants_label' => 'Maximum Participants',
+    'max_participants_hint'  => 'Minimum 3 participants required for the draw.',
+    'create_group_btn'     => '✨ Create Group',
+    'how_share'            => 'Share the link',
+    'how_register'         => 'Participants register',
+    'how_draw'             => 'Execute the draw',
+
+    // Group Created
+    'group_created_title'    => 'Group Created!',
+    'group_created_subtitle' => 'Save the details below — you\'ll need them.',
+    'reg_link_heading'       => '🔗 Registration Link',
+    'reg_link_hint'          => 'Share this link with your group members:',
+    'admin_code_heading'     => '🔑 Your Admin Code',
+    'admin_code_warning'     => '⚠️ Save this now — it will not be shown again.',
+    'admin_dashboard_heading'=> '🛠 Admin Dashboard',
+    'go_to_dashboard'        => 'Go to Dashboard →',
+    'group_info'             => 'Group: :name · Max participants: :max',
+
+    // Admin Login
+    'admin_login_title'   => 'Admin Access',
+    'admin_code_label'    => 'Admin Code',
+    'admin_code_placeholder' => 'Enter your admin code',
+    'access_dashboard_btn'=> 'Access Dashboard →',
+
+    // Admin Dashboard
+    'dashboard_title'     => '🛠 Admin Dashboard',
+    'status_draw_done'    => '✅ Draw Executed',
+    'status_locked'       => '🔒 Registration Locked',
+    'status_open'         => '🟢 Registration Open',
+    'stat_registered'     => 'Registered',
+    'stat_max'            => 'Max',
+    'stat_remaining'      => 'Remaining',
+    'btn_unlock'          => '🔓 Unlock Registration',
+    'btn_lock'            => '🔒 Lock Registration',
+    'btn_draw'            => '🎯 Execute Draw',
+    'btn_draw_need_more'  => '(need :count more)',
+    'draw_confirm'        => 'Execute the draw? This cannot be undone.',
+    'participants_heading'=> '👥 Participants (:count)',
+    'no_participants'     => 'No participants yet. Share the registration link!',
+    'registered_at'       => 'Registered :time',
+    'remove_btn'          => 'Remove',
+    'remove_confirm'      => 'Remove :name?',
+    'reg_link_label'      => '🔗 Registration Link',
+
+    // Participant Registration
+    'join_title'          => 'Join the Gift Exchange',
+    'join_count'          => ':current / :max participants registered',
+    'name_label'          => 'Full Name',
+    'name_placeholder'    => 'Your full name',
+    'phone_label'         => 'WhatsApp Number',
+    'phone_placeholder'   => 'e.g. +966 5X XXX XXXX',
+    'phone_hint'          => 'You\'ll receive your assignment via WhatsApp on draw day.',
+    'interests_label'     => 'Gift Interests',
+    'interests_hint_count'=> '(choose up to 3)',
+    'interests_hint'      => 'This helps your gift-giver pick something you\'ll love!',
+    'join_btn'            => '🎉 Join the Exchange',
+    'interests_max_warn'  => '⚠️ Maximum 3 interests allowed.',
+
+    // Success Page
+    'success_title'       => 'You\'re In!',
+    'success_subtitle'    => 'You\'ve successfully joined :group.',
+    'success_body'        => 'On the day of the draw, you\'ll receive a WhatsApp message with the name of the person you\'re gifting — along with their interests to help you choose the perfect gift! 🎁',
+    'success_next'        => '📋 What happens next?',
+    'success_step1'       => '✅ Your registration is confirmed',
+    'success_step2'       => '⏳ Wait for the admin to execute the draw',
+    'success_step3'       => '📱 You\'ll get a WhatsApp message with your assignment',
+    'success_step4'       => '🎁 Prepare a thoughtful gift before Eid!',
+    'success_greeting'    => 'عيد مبارك وكل عام وأنتم بخير 🌙',
+
+    // Closed Page
+    'closed_draw_title'   => 'Draw Already Executed',
+    'closed_draw_body'    => 'The gift exchange draw for :group has already been completed. Check your WhatsApp for your assignment!',
+    'closed_lock_title'   => 'Registration Locked',
+    'closed_lock_body'    => 'The admin has locked registration for :group. Please contact the group admin.',
+    'closed_full_title'   => 'Group is Full',
+    'closed_full_body'    => ':group has reached its maximum capacity of :max participants.',
+
+];

@@ -1,33 +1,33 @@
 @extends('layouts.app')
 
-@section('title', 'Tahadou — Create a Gift Exchange Group')
+@section('title', __('app.home_title'))
 
 @section('content')
 <div class="max-w-lg mx-auto">
     <!-- Hero -->
     <div class="text-center mb-10">
         <div class="text-6xl mb-4">🎁</div>
-        <h1 class="text-4xl font-bold text-violet-800 mb-2">Tahadou</h1>
-        <p class="text-gray-500 text-lg">Organize your Eid gift exchange in minutes.</p>
+        <h1 class="text-4xl font-bold text-violet-800 mb-2">{{ __('app.home_hero_title') }}</h1>
+        <p class="text-gray-500 text-lg">{{ __('app.home_hero_subtitle') }}</p>
     </div>
 
     <!-- Create Group Card -->
     <div class="bg-white rounded-2xl shadow-lg border border-violet-100 p-8">
-        <h2 class="text-xl font-semibold text-gray-700 mb-6">🎉 Create a New Group</h2>
+        <h2 class="text-xl font-semibold text-gray-700 mb-6">{{ __('app.create_group_heading') }}</h2>
 
         <form action="{{ route('group.create') }}" method="POST" class="space-y-5">
             @csrf
 
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-600 mb-1">
-                    Group Name
+                    {{ __('app.group_name_label') }}
                 </label>
                 <input
                     type="text"
                     id="name"
                     name="name"
                     value="{{ old('name') }}"
-                    placeholder="e.g. Al-Johani Family Eid 2025"
+                    placeholder="{{ __('app.group_name_placeholder') }}"
                     required
                     class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-violet-400 focus:border-violet-400 outline-none transition text-sm"
                 />
@@ -38,7 +38,7 @@
 
             <div>
                 <label for="max_participants" class="block text-sm font-medium text-gray-600 mb-1">
-                    Maximum Participants
+                    {{ __('app.max_participants_label') }}
                 </label>
                 <input
                     type="number"
@@ -50,7 +50,7 @@
                     required
                     class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-violet-400 focus:border-violet-400 outline-none transition text-sm"
                 />
-                <p class="text-xs text-gray-400 mt-1">Minimum 3 participants required for the draw.</p>
+                <p class="text-xs text-gray-400 mt-1">{{ __('app.max_participants_hint') }}</p>
                 @error('max_participants')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
@@ -60,7 +60,7 @@
                 type="submit"
                 class="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold transition text-sm tracking-wide shadow"
             >
-                ✨ Create Group
+                {{ __('app.create_group_btn') }}
             </button>
         </form>
     </div>
@@ -69,15 +69,15 @@
     <div class="mt-10 grid grid-cols-3 gap-4 text-center">
         <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
             <div class="text-2xl mb-2">🔗</div>
-            <p class="text-xs text-gray-500">Share the link</p>
+            <p class="text-xs text-gray-500">{{ __('app.how_share') }}</p>
         </div>
         <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
             <div class="text-2xl mb-2">📝</div>
-            <p class="text-xs text-gray-500">Participants register</p>
+            <p class="text-xs text-gray-500">{{ __('app.how_register') }}</p>
         </div>
         <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
             <div class="text-2xl mb-2">🎯</div>
-            <p class="text-xs text-gray-500">Execute the draw</p>
+            <p class="text-xs text-gray-500">{{ __('app.how_draw') }}</p>
         </div>
     </div>
 </div>
