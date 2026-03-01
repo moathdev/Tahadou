@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Jobs\SendWhatsAppNotification;
 use App\Models\Group;
 use App\Models\Participant;
 use Illuminate\Support\Collection;
@@ -34,10 +33,6 @@ class DrawService
             $receiver = $participants[($i + 1) % $count];
 
             $giver->update(['assigned_to_id' => $receiver->id]);
-
-            // Dispatch WhatsApp notification to queue
-            SendWhatsAppNotification::dispatch($giver->id, $receiver->id)
-                ->onQueue('whatsapp');
         }
 
         $group->update(['is_drawn' => true, 'is_locked' => true]);

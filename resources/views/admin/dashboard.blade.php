@@ -83,6 +83,18 @@
         <p class="text-red-500 text-sm mb-4">{{ $message }}</p>
     @enderror
 
+    {{-- Download Excel — shown only after draw --}}
+    @if($group->is_drawn)
+    <div class="mb-6">
+        <a
+            href="{{ route('admin.download.excel', $group->uuid) }}"
+            class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold text-sm shadow transition"
+        >
+            {{ __('app.btn_download_excel') }}
+        </a>
+    </div>
+    @endif
+
     <!-- Participants List -->
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100">

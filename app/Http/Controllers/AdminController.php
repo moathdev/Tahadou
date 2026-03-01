@@ -111,6 +111,57 @@ class AdminController extends Controller
     }
 
     /**
+     * Download draw results as Excel (CSV).
+     */
+    public function downloadExcel(string $uuid): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $this->requireAuth($uuid);
+
+        $group = Group::where('uuid', $uuid)->firstOrFail();
+
+        abort_unless($group->is_drawn, 403, 'Draw has not been executed yet.');
+
+        $participants = $group->participants()->with('assignedTo')->get();
+
+        $filename = 'draw-' . str($group->name)->slug() . '-' . now()->format('Y-m-d') . '.csv';
+
+        return response()->streamDownload(function () use ($participants) {
+            $handle = fopen('php://output', 'w');
+
+            // UTF-8 BOM so Excel opens Arabic correctly
+            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // Header row
+            fputcsv($handle, [
+                'المُهدِي',
+                'رقم الجوال',
+                'الاهتمامات',
+                'سيُهدي إلى',
+                'جوال المُهدَى إليه',
+            ]);
+
+            foreach ($participants as $p) {
+                $interests = collect($p->interests ?? [])
+                    ->map(fn ($key) => __("app.interest_{$key}"))
+                    ->implode(' | ');
+
+                fputcsv($handle, [
+                    $p->name,
+                    $p->phone_number,
+                    $interests,
+                    $p->assignedTo?->name ?? '—',
+                    $p->assignedTo?->phone_number ?? '—',
+                ]);
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
+    }
+
+    /**
      * Verify admin session for this group.
      */
     private function requireAuth(string $uuid): void
