@@ -14,6 +14,36 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>@yield('title', __('app.app_name') . ' — ' . __('app.tagline'))</title>
 
+    @php
+        $metaDesc = $isAr
+            ? 'تهادوا — نظام مفتوح المصدر لتنظيم تبادل الهدايا بين الأهل والأصدقاء. أنشئ مجموعة، شارك الرابط، واسحب القرعة بضغطة واحدة.'
+            : 'Tahadou — open-source gift exchange platform. Create a group, share a link, run the draw, and send WhatsApp assignments in minutes.';
+        $metaTitle  = __('app.app_name') . ' — ' . __('app.tagline');
+        $metaUrl    = config('app.url');
+        $metaLocale = $isAr ? 'ar_SA' : 'en_US';
+    @endphp
+
+    <!-- SEO -->
+    <meta name="description" content="@yield('meta_description', $metaDesc)" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="{{ $metaUrl }}" />
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:site_name"   content="{{ __('app.app_name') }}" />
+    <meta property="og:title"       content="@yield('meta_title', $metaTitle)" />
+    <meta property="og:description" content="@yield('meta_description', $metaDesc)" />
+    <meta property="og:url"         content="{{ $metaUrl }}" />
+    <meta property="og:locale"      content="{{ $metaLocale }}" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary" />
+    <meta name="twitter:site"        content="@moathdev" />
+    <meta name="twitter:title"       content="@yield('meta_title', $metaTitle)" />
+    <meta name="twitter:description" content="@yield('meta_description', $metaDesc)" />
+
+    @stack('meta')
+
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>" />
 
     <!-- Fonts -->

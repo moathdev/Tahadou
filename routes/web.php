@@ -48,7 +48,6 @@ Route::prefix('admin/{uuid}')->name('admin.')->group(function () {
     Route::delete('/participants/{participant}', [AdminController::class, 'removeParticipant'])->name('participants.remove');
     Route::post('/lock',          [AdminController::class, 'toggleLock'])->name('lock');
     Route::post('/draw',          [AdminController::class, 'executeDraw'])->name('draw');
-    Route::get('/download-excel', [AdminController::class, 'downloadExcel'])->name('download.excel');
 });
 
 /*
