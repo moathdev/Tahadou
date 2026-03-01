@@ -171,12 +171,15 @@ class AdminController extends Controller
         }
 
         $content  = $xlsx->generate();
-        $filename = 'draw-' . str($group->name)->slug() . '-' . now()->format('Y-m-d') . '.xlsx';
+        $filename = 'tahadou-draw-' . now()->format('Y-m-d') . '.xlsx';
 
         return response($content, 200, [
-            'Content-Type'        => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-            'Cache-Control'       => 'no-cache',
+            'Content-Type'              => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition'       => 'attachment; filename="' . $filename . '"',
+            'Content-Length'            => strlen($content),
+            'Cache-Control'             => 'no-store, no-cache',
+            'Pragma'                    => 'no-cache',
+            'X-Content-Type-Options'    => 'nosniff',
         ]);
     }
 
@@ -205,18 +208,20 @@ class AdminController extends Controller
         $receiver  = $receiverName  ?? '—';
         $interests = $receiverInterests ?: '—';
 
-        return <<<MSG
-        مرحباً {$giverName}،
-        أنت ضمن قرعة "{$groupName}" لتبادل الهدايا 🎁
-        
-        الشخص الذي ستهديه:
-        {$receiver}
-        
-        اهتماماته:
-        - {$interests}
-        
-        جهّز له هدية قبل العيد 🌙
-        MSG;
+        $lines = [
+            "مرحباً {$giverName}،",
+            "أنت ضمن قرعة \"{$groupName}\" لتبادل الهدايا 🎁",
+            '',
+            'الشخص الذي ستهديه:',
+            $receiver,
+            '',
+            'اهتماماته:',
+            "- {$interests}",
+            '',
+            'جهّز له هدية قبل العيد 🌙',
+        ];
+
+        return implode("\n", $lines);
     }
 
     /**

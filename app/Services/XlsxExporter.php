@@ -36,10 +36,15 @@ class XlsxExporter
         [$sheetXml, $sheetRelsXml] = $this->buildSheet();
         $ssXml                     = $this->buildSharedStrings();
 
-        $tmpFile = tempnam(sys_get_temp_dir(), 'xlsx_');
+        // Use a unique non-existing path — ZipArchive::CREATE works cleanly on new files
+        $tmpFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'xlsx_' . uniqid('', true) . '.xlsx';
 
-        $zip = new \ZipArchive();
-        $zip->open($tmpFile, \ZipArchive::OVERWRITE);
+        $zip    = new \ZipArchive();
+        $result = $zip->open($tmpFile, \ZipArchive::CREATE);
+
+        if ($result !== true) {
+            throw new \RuntimeException('ZipArchive failed to open: code ' . $result);
+        }
 
         $zip->addFromString('[Content_Types].xml',     $this->contentTypes());
         $zip->addFromString('_rels/.rels',              $this->rootRels());
