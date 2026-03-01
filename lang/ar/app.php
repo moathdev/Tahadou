@@ -42,6 +42,15 @@ return [
     'go_to_dashboard'        => 'الذهاب إلى اللوحة ←',
     'group_info'             => 'المجموعة: :name · الحد الأقصى: :max مشترك',
 
+    // Admin Find Group
+    'admin_find_title'          => 'دخول المشرف',
+    'admin_find_subtitle'       => 'أدخل معرّف مجموعتك للوصول إلى لوحة التحكم',
+    'admin_find_uuid_label'     => 'معرّف المجموعة (UUID)',
+    'admin_find_uuid_placeholder'=> 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+    'admin_find_uuid_required'  => 'يرجى إدخال معرّف المجموعة.',
+    'admin_find_btn'            => 'الدخول إلى اللوحة ←',
+    'admin_find_hint'           => 'ستجد المعرّف في صفحة إنشاء المجموعة.',
+
     // Admin Login
     'admin_login_title'   => 'دخول المشرف',
     'admin_code_label'    => 'كود المشرف',

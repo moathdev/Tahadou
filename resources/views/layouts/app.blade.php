@@ -57,7 +57,7 @@
                     {{ $otherLabel }}
                 </a>
                 <a
-                    href="{{ route('admin.login') }}"
+                    href="{{ route('admin.find') }}"
                     class="text-xs px-2 py-1 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700 transition font-medium"
                     title="{{ __('app.admin_login') }}"
                 >

@@ -16,6 +16,14 @@ class AdminController extends Controller
     public function __construct(protected DrawService $drawService) {}
 
     /**
+     * Show the "find your group" page (entry point from navbar).
+     */
+    public function findForm()
+    {
+        return view('admin.find');
+    }
+
+    /**
      * Show admin login form.
      */
     public function loginForm(string $uuid)
