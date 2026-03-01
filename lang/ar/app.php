@@ -75,7 +75,7 @@ return [
     'name_placeholder'    => 'اسمك الكامل',
     'phone_label'         => 'رقم الواتساب',
     'phone_placeholder'   => '0512345678',
-    'phone_hint'          => 'ستصلك رسالة واتساب بتفاصيل هديتك يوم القرعة.',
+    'phone_hint'          => 'يوم القرعة ستعرف مين راح تهديه عن طريق الأكسل.',
     'interests_label'     => 'اهتمامات الهدايا',
     'interests_hint_count'=> '(اختر حتى 3)',
     'interests_hint'      => 'هذا يساعد صاحب هديتك على اختيار شيء تحبه!',
