@@ -6,14 +6,15 @@
 
 ## ✨ Features
 
-- 🌐 **Bilingual** — Arabic (RTL) default + English with a language switcher on every page
+- 🌐 **Bilingual** — Arabic (RTL) default + English with a language switcher on every page; all UI text, WhatsApp messages, and the footer switch automatically with the selected language
+- 🕌 **Hadith section** — homepage includes an explanation of the Prophetic hadith *"Tahadou Tahabbu"* in both Arabic and English
 - 🔗 **Shareable registration link** — auto-generated when a group is created
 - 🔑 **Code-only admin access** — enter your 8-character admin code at `/admin` to reach your dashboard (no UUID needed)
 - 👥 **Admin dashboard** — view participants, remove them, lock registration, execute the draw, send WhatsApp messages
 - 💰 **Max gift price** — optional budget cap shown to participants at registration and included in the WhatsApp message
 - 📝 **Participant registration** — full name, WhatsApp number, up to 3 interests from 10 categories
 - 🎯 **Smart draw algorithm** — Circular Permutation (no self-assignment, no two-person loops)
-- 📱 **Direct WhatsApp send** — after the draw, each row has a button that opens WhatsApp with a pre-written bilingual message
+- 📱 **Direct WhatsApp send** — after the draw, each row has a button that opens WhatsApp with a pre-written message in the admin's active language (Arabic or English)
 - ✅ **Send tracking** — button turns to "Sent ✓" with an option to resend (stored in `localStorage`)
 - 🛡️ **Strict validation** — Saudi mobile format only (`05XXXXXXXXX`), name ≥ 3 characters, no duplicate phone per group
 
@@ -124,13 +125,14 @@ The admin code is stored as bcrypt in the DB. A SHA-256 lookup hash (`admin_look
 
 ## 📱 WhatsApp Message Template
 
-After the draw, the admin clicks a button per participant to open WhatsApp with this pre-filled message:
+After the draw, the admin clicks a button per participant to open WhatsApp with a pre-filled message. The message is **automatically generated in the admin's active language** (Arabic or English).
 
+**English:**
 ```
 Hello [Giver Name],
-You are part of the "[Group Name]" gift exchange 🎁
+You're part of the "[Group Name]" gift exchange 🎁
 
-The person you'll be gifting:
+You're gifting:
 [Receiver Name]
 
 Their interests:
@@ -139,7 +141,24 @@ Their interests:
 
 ⚠️ Max gift price: [Amount] SAR   ← only shown if set
 
-Prepare their gift before Eid! 🌙
+Prepare a thoughtful gift before Eid! 🌙
+```
+
+**Arabic:**
+```
+مرحباً [اسم المهدي]،
+أنت ضمن قرعة "[اسم المجموعة]" لتبادل الهدايا 🎁
+
+الشخص الذي ستهديه:
+[اسم المُهدى إليه]
+
+اهتماماته:
+- [اهتمام 1]
+- [اهتمام 2]
+
+⚠️ الحد الأقصى لسعر الهدية: [المبلغ] ريال   ← يظهر فقط إذا تم تعيينه
+
+جهّز له هدية قبل العيد 🌙
 ```
 
 The button state ("Send" → "Sent ✓") is tracked per-participant in `localStorage` so it persists across page refreshes.
