@@ -1,147 +1,178 @@
-# 🎁 Tahadou — Eid Gift Exchange Platform
+# 🎁 تهادوا تحابوا — Eid Gift Exchange Platform
 
-> An automated, secure, and user-friendly platform for organizing Eid gift exchange among groups of friends and family.
-
----
-
-## ✨ Features
-
-- **Create a group** with a custom name and max participant limit
-- **Shareable registration link** — share with participants via any channel
-- **Admin Dashboard** — protected by a private admin code, view/remove participants, lock registration, and execute the draw
-- **Participant registration** — full name, WhatsApp number, and up to 3 gift interests from 10 predefined categories
-- **Smart draw algorithm** — Circular permutation (Derangement) ensuring no self-assignment and no two-person loops
-- **WhatsApp notifications** — each participant receives a private message with their assigned person's name and interests, dispatched via a background queue
-- **Bot protection** — Cloudflare WAF-ready
-- **Horizontally scalable** — Dockerized and deployable on k3s
+> منصة متكاملة وآمنة لتنظيم تبادل الهدايا في مناسبات العيد.
+> An automated, secure, and user-friendly platform for organizing Eid gift exchanges.
 
 ---
 
-## 🛠 Tech Stack
+## ✨ المميزات / Features
 
-| Layer        | Technology                         |
-|--------------|-------------------------------------|
-| Backend      | PHP 8.3 + Laravel 11                |
-| Database     | MySQL 8 (PostgreSQL compatible)     |
-| Queue        | Laravel Queue (database / Redis)    |
-| Frontend     | Blade + Vite + TailwindCSS          |
-| Containers   | Docker + docker-compose             |
-| Orchestration| k3s (Kubernetes)                    |
-| Edge / CDN   | Cloudflare (WAF + Web Analytics)    |
-| Storage      | Cloudflare R2 (S3-compatible)       |
+- 🌐 **ثنائي اللغة** — عربي (RTL) وإنجليزي مع زر تبديل في كل صفحة
+- 🔗 **رابط تسجيل قابل للمشاركة** — ينشأ تلقائياً عند إنشاء المجموعة
+- 🔑 **كود مشرف خاص** — يُعرض مرة واحدة فقط عند الإنشاء
+- 👥 **لوحة تحكم المشرف** — عرض المشتركين مع اهتماماتهم وأرقامهم، إزالة مشترك، قفل التسجيل، تنفيذ القرعة
+- 💰 **حد أقصى لسعر الهدية** — اختياري، يظهر للمشتركين عند التسجيل وفي رسالة الواتساب
+- 📝 **تسجيل المشتركين** — الاسم، رقم الواتساب، واختيار حتى 3 اهتمامات من 10 فئات
+- 🎯 **خوارزمية القرعة** — Circular Permutation تضمن ألا يهدي أحد نفسه
+- 📱 **إرسال واتساب مباشر** — بعد القرعة، زر لكل مشترك يفتح الواتساب مع رسالة جاهزة
+- ✅ **تتبع الإرسال** — الزر يتحول لـ "تم الإرسال" مع إمكانية إعادة الإرسال
+- 🛡️ **تحقق صارم** — رقم جوال سعودي فقط، اسم لا يقل عن 3 أحرف، لا تكرار في نفس المجموعة
 
 ---
 
-## 🚀 Local Development (Docker)
+## 🛠 التقنيات / Tech Stack
 
-### Prerequisites
-- Docker & docker-compose installed
+| Layer        | Technology                          |
+|--------------|--------------------------------------|
+| Backend      | PHP 8.2+ / Laravel 11                |
+| Database     | MySQL 8                              |
+| Frontend     | Blade + Tailwind CSS (CDN)           |
+| Localisation | Arabic (RTL) + English (LTR)         |
+| Containers   | Docker + Supervisor (nginx + php-fpm)|
+| Orchestration| k3s (Kubernetes)                     |
+| Edge / CDN   | Cloudflare (WAF ready)               |
 
-### Setup
+---
+
+## 🚀 التشغيل المحلي / Local Setup
+
+### المتطلبات / Requirements
+- PHP 8.2+
+- Composer
+- MySQL 8
+- Node.js (for assets, optional)
+
+### الخطوات / Steps
 
 ```bash
 git clone https://github.com/moathdev/Tahadou.git
 cd Tahadou
 
-# Copy environment file
+# Copy env file
 cp .env.example .env
 
-# Start all services
-docker-compose up -d
+# Edit DB credentials in .env
+# DB_HOST=127.0.0.1 | DB_DATABASE=tahadou | DB_USERNAME=... | DB_PASSWORD=...
 
-# Install PHP dependencies
-docker-compose exec app composer install
+# Install dependencies
+composer install
 
 # Generate app key
-docker-compose exec app php artisan key:generate
+php artisan key:generate
 
 # Run migrations
-docker-compose exec app php artisan migrate
+php artisan migrate
 
-# Build frontend assets
-docker-compose exec app npm install && npm run build
+# Start server
+php artisan serve
 ```
 
-App will be available at: **http://localhost:8080**
+App: **http://localhost:8000**
 
 ---
 
-## 🗄 Database Schema
+## 🗄 قاعدة البيانات / Database Schema
 
 ### `groups`
-| Column           | Type      | Notes                              |
-|------------------|-----------|------------------------------------|
-| id               | bigint PK |                                    |
-| uuid             | string    | Unique — used in shareable URL     |
-| name             | string    | Group display name                 |
-| max_participants | int       | Maximum allowed participants       |
-| admin_code       | string    | Bcrypt hashed admin password       |
-| is_locked        | boolean   | Locks new registrations            |
-| is_drawn         | boolean   | True after draw is executed        |
-| created_at       | timestamp |                                    |
-| updated_at       | timestamp |                                    |
+| Column           | Type      | Notes                                    |
+|------------------|-----------|------------------------------------------|
+| id               | bigint PK |                                          |
+| uuid             | string    | Unique — used in shareable URL           |
+| name             | string    | Group display name                       |
+| max_participants | int       | Maximum allowed participants             |
+| max_gift_price   | int?      | Optional max gift budget (SAR)           |
+| admin_code       | string    | Bcrypt hashed admin password             |
+| is_locked        | boolean   | Locks new registrations                  |
+| is_drawn         | boolean   | True after draw is executed              |
+| created_at/updated_at | timestamp |                                     |
 
 ### `participants`
-| Column          | Type      | Notes                                        |
-|-----------------|-----------|----------------------------------------------|
-| id              | bigint PK |                                              |
-| group_id        | bigint FK | References groups.id                         |
-| name            | string    | Full name                                    |
-| phone_number    | string    | WhatsApp number (unique per group)           |
-| interests       | JSON      | Up to 3 selected interests                   |
-| assigned_to_id  | bigint FK | References participants.id (null until draw) |
-| created_at      | timestamp |                                              |
-| updated_at      | timestamp |                                              |
+| Column          | Type      | Notes                                         |
+|-----------------|-----------|-----------------------------------------------|
+| id              | bigint PK |                                               |
+| group_id        | bigint FK | → groups.id                                   |
+| name            | string    | Full name                                     |
+| phone_number    | string    | Saudi mobile (unique per group)               |
+| interests       | JSON      | Up to 3 selected interest keys                |
+| assigned_to_id  | bigint FK | → participants.id (null until draw)           |
+| created_at/updated_at | timestamp |                                         |
 
 ---
 
-## 🎯 Draw Algorithm
+## 🎯 خوارزمية القرعة / Draw Algorithm
 
-The draw uses a **circular permutation (Derangement)** approach:
+**Circular Permutation (Derangement):**
 
-1. Participants array is shuffled randomly
-2. Shifted by one position: A→B, B→C, ..., Last→A
-3. This guarantees:
-   - ✅ No one draws themselves
-   - ✅ No two-person closed loops
-   - ✅ Every person gives exactly once and receives exactly once
-
-After the draw, Laravel dispatches a **Job** per participant to the queue, sending a WhatsApp message with their assigned person's name and gift interests — without blocking the admin's request.
+1. يتم خلط المشتركين عشوائياً
+2. كل مشترك `[i]` يهدي المشترك `[i+1]`، والأخير يهدي الأول
+3. ✅ لا أحد يهدي نفسه
+4. ✅ لا حلقات مغلقة بين شخصين فقط (للمجموعات > 2)
 
 ---
 
-## ⚙️ Environment Variables
+## 📱 رسالة الواتساب / WhatsApp Message
+
+بعد تنفيذ القرعة، يظهر زر لكل مشترك في لوحة المشرف يفتح الواتساب مع هذه الرسالة:
+
+```
+مرحباً [اسم المهدي]،
+أنت ضمن قرعة "[اسم المجموعة]" لتبادل الهدايا 🎁
+
+الشخص الذي ستهديه:
+[اسم المهدى إليه]
+
+اهتماماته:
+- [اهتمام 1]
+- [اهتمام 2]
+
+⚠️ الحد الأقصى لسعر الهدية: [المبلغ] ريال   ← يظهر فقط إذا حُدد
+
+جهّز له هدية قبل العيد 🌙
+```
+
+---
+
+## 🎁 فئات الاهتمامات / Gift Interest Categories
+
+| Key          | عربي                    | English                  |
+|--------------|--------------------------|--------------------------|
+| books        | 📚 الكتب                 | 📚 Books                 |
+| electronics  | 📱 الإلكترونيات والأجهزة | 📱 Electronics & Gadgets |
+| sports       | 🏋️ الرياضة واللياقة      | 🏋️ Sports & Fitness      |
+| fashion      | 👗 الموضة والإكسسوارات   | 👗 Fashion & Accessories |
+| home         | 🏠 المنزل والمطبخ        | 🏠 Home & Kitchen        |
+| games        | 🎮 الألعاب والترفيه      | 🎮 Games & Entertainment |
+| beauty       | 💄 التجميل والعناية      | 💄 Beauty & Skincare     |
+| travel       | ✈️ السفر والمغامرة       | ✈️ Travel & Outdoor      |
+| art          | 🎨 الفن والأشغال اليدوية | 🎨 Art & Crafts          |
+| food         | 🍫 الطعام والحلويات      | 🍫 Food & Sweets         |
+
+---
+
+## ⚙️ متغيرات البيئة / Environment Variables
 
 ```env
 APP_NAME=Tahadou
 APP_ENV=production
-APP_KEY=                         # Generated via artisan key:generate
+APP_KEY=                    # php artisan key:generate
 APP_DEBUG=false
 APP_URL=https://tahadou.nit.sa
+APP_LOCALE=ar               # ar | en
 
 DB_CONNECTION=mysql
-DB_HOST=mysql
+DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=tahadou
 DB_USERNAME=tahadou
 DB_PASSWORD=secret
 
-QUEUE_CONNECTION=database        # Switch to redis for production
-
-WHATSAPP_API_URL=                # Your WhatsApp API endpoint
-WHATSAPP_API_TOKEN=              # Your API token
-
-AWS_ACCESS_KEY_ID=               # Cloudflare R2
-AWS_SECRET_ACCESS_KEY=
-AWS_DEFAULT_REGION=auto
-AWS_BUCKET=tahadou
-AWS_ENDPOINT=https://<account>.r2.cloudflarestorage.com
-AWS_USE_PATH_STYLE_ENDPOINT=true
+SESSION_DRIVER=database
+QUEUE_CONNECTION=database
 ```
 
 ---
 
-## ☸️ Deploying on k3s
+## ☸️ النشر على k3s / Deploying on k3s
 
 ```bash
 # Create namespace
@@ -151,7 +182,6 @@ kubectl create namespace tahadou
 kubectl create secret generic tahadou-secrets \
   --from-literal=APP_KEY=base64:... \
   --from-literal=DB_PASSWORD=... \
-  --from-literal=WHATSAPP_API_TOKEN=... \
   -n tahadou
 
 # Apply manifests
@@ -163,21 +193,50 @@ kubectl rollout status deployment/tahadou -n tahadou
 
 ---
 
-## 🎁 Gift Interest Categories
+## 🏗 هيكل المشروع / Project Structure
 
-1. 📚 Books
-2. 📱 Electronics & Gadgets
-3. 🏋️ Sports & Fitness
-4. 👗 Fashion & Accessories
-5. 🏠 Home & Kitchen
-6. 🎮 Games & Entertainment
-7. 💄 Beauty & Skincare
-8. ✈️ Travel & Outdoor
-9. 🎨 Art & Crafts
-10. 🍫 Food & Sweets
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── GroupController.php        # Group creation
+│   │   ├── AdminController.php        # Dashboard, draw, WhatsApp
+│   │   └── ParticipantController.php  # Registration
+│   ├── Middleware/
+│   │   └── SetLocale.php              # ar/en session-based locale
+│   └── Requests/                      # Validated form requests
+├── Models/
+│   ├── Group.php
+│   └── Participant.php
+└── Services/
+    └── DrawService.php                # Circular permutation algorithm
+
+lang/
+├── ar/app.php                         # Arabic translations
+├── ar/validation.php
+├── en/app.php                         # English translations
+└── en/validation.php
+
+resources/views/
+├── layouts/app.blade.php              # RTL/LTR layout + lang switcher
+├── home.blade.php                     # Landing page
+├── group/created.blade.php            # Post-creation (link + admin code)
+├── admin/
+│   ├── login.blade.php
+│   └── dashboard.blade.php            # Full admin panel
+└── participant/
+    ├── register.blade.php
+    ├── success.blade.php
+    └── closed.blade.php
+
+k8s/
+├── deployment.yaml                    # App + queue worker (2 replicas)
+├── service.yaml
+└── ingress.yaml                       # Cloudflare-ready
+```
 
 ---
 
 ## 📄 License
 
-Private project — NIT © 2025
+Private project — Built with ❤️ by [Muath Aljohani](https://moath.co)
