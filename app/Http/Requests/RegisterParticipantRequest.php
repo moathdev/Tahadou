@@ -14,7 +14,9 @@ class RegisterParticipantRequest extends FormRequest
 
     public function rules(): array
     {
-        $uuid = $this->route('uuid');
+        $uuid    = $this->route('uuid');
+        $group   = \App\Models\Group::where('uuid', $uuid)->first();
+        $groupId = $group?->id;
 
         return [
             'name'         => ['required', 'string', 'min:2', 'max:100'],
@@ -23,11 +25,7 @@ class RegisterParticipantRequest extends FormRequest
                 'string',
                 'regex:/^[0-9\+\-\s]{7,20}$/',
                 Rule::unique('participants', 'phone_number')
-                    ->where(function ($query) use ($uuid) {
-                        return $query->whereHas('group', function ($q) use ($uuid) {
-                            $q->where('uuid', $uuid);
-                        });
-                    }),
+                    ->where('group_id', $groupId),
             ],
             'interests'    => ['required', 'array', 'min:1', 'max:3'],
             'interests.*'  => ['string', Rule::in(array_keys(config('tahadou.interests')))],
