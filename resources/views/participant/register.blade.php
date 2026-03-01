@@ -13,6 +13,11 @@
         <p class="text-gray-400 text-xs mt-1">
             {{ __('app.join_count', ['current' => $group->participants()->count(), 'max' => $group->max_participants]) }}
         </p>
+        @if($group->max_gift_price)
+        <div class="inline-flex items-center gap-1.5 mt-2 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-medium">
+            {{ __('app.max_gift_price_badge', ['price' => number_format($group->max_gift_price)]) }}
+        </div>
+        @endif
     </div>
 
     <div class="bg-white rounded-2xl shadow-lg border border-violet-100 p-8">

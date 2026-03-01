@@ -28,6 +28,7 @@ class GroupController extends Controller
         $group = Group::create([
             'name'             => $request->name,
             'max_participants' => $request->max_participants,
+            'max_gift_price'   => $request->max_gift_price ?: null,
             'admin_code'       => Hash::make($rawAdminCode),
         ]);
 

@@ -54,6 +54,9 @@
 
     <p class="text-center text-xs text-gray-400">
         {{ __('app.group_info', ['name' => $group->name, 'max' => $group->max_participants]) }}
+        @if($group->max_gift_price)
+            · {{ __('app.max_gift_price_badge', ['price' => number_format($group->max_gift_price)]) }}
+        @endif
     </p>
 </div>
 @endsection

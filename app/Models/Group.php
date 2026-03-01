@@ -15,6 +15,7 @@ class Group extends Model
         'uuid',
         'name',
         'max_participants',
+        'max_gift_price',
         'admin_code',
         'is_locked',
         'is_drawn',

@@ -16,6 +16,7 @@ class CreateGroupRequest extends FormRequest
         return [
             'name'             => ['required', 'string', 'min:2', 'max:100'],
             'max_participants' => ['required', 'integer', 'min:3', 'max:200'],
+            'max_gift_price'   => ['nullable', 'integer', 'min:1', 'max:100000'],
         ];
     }
 

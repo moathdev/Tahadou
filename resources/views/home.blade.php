@@ -56,6 +56,25 @@
                 @enderror
             </div>
 
+            <div>
+                <label for="max_gift_price" class="block text-sm font-medium text-gray-600 mb-1">
+                    {{ __('app.max_gift_price_label') }}
+                </label>
+                <input
+                    type="number"
+                    id="max_gift_price"
+                    name="max_gift_price"
+                    value="{{ old('max_gift_price') }}"
+                    min="1"
+                    placeholder="{{ __('app.max_gift_price_placeholder') }}"
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-violet-400 focus:border-violet-400 outline-none transition text-sm"
+                />
+                <p class="text-xs text-gray-400 mt-1">{{ __('app.max_gift_price_hint') }}</p>
+                @error('max_gift_price')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
             <button
                 type="submit"
                 class="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold transition text-sm tracking-wide shadow"
