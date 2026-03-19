@@ -48,20 +48,20 @@
                 <label class="block text-sm font-medium text-gray-600 mb-2">
                     {{ __('app.gender_label') }} <span class="text-red-400">*</span>
                 </label>
-                <div class="grid grid-cols-3 gap-3">
-                    @foreach(['male' => ['emoji' => '👨', 'key' => 'male'], 'female' => ['emoji' => '👩', 'key' => 'female'], 'child' => ['emoji' => '🧒', 'key' => 'child']] as $value => $meta)
-                    <label class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-violet-300 hover:bg-violet-50 transition gender-option {{ old('gender') === $value ? 'border-violet-400 bg-violet-50' : '' }}">
-                        <input
-                            type="radio"
-                            name="gender"
-                            value="{{ $value }}"
-                            {{ old('gender') === $value ? 'checked' : '' }}
-                            class="sr-only gender-radio"
-                            required
-                        />
-                        <span class="text-2xl">{{ $meta['emoji'] }}</span>
+                {{-- Hidden input carries the actual submitted value --}}
+                <input type="hidden" name="gender" id="gender-value" value="{{ old('gender', '') }}" />
+
+                <div class="grid grid-cols-3 gap-3" id="gender-grid">
+                    @foreach(['male' => '👨', 'female' => '👩', 'child' => '🧒'] as $value => $emoji)
+                    @php $isSelected = old('gender') === $value; @endphp
+                    <button
+                        type="button"
+                        data-gender="{{ $value }}"
+                        class="gender-btn flex flex-col items-center gap-1.5 p-3 rounded-xl border cursor-pointer hover:border-violet-300 hover:bg-violet-50 transition {{ $isSelected ? 'border-violet-400 bg-violet-50 ring-2 ring-violet-300' : 'border-gray-200' }}"
+                    >
+                        <span class="text-2xl">{{ $emoji }}</span>
                         <span class="text-xs font-medium text-gray-600">{{ __('app.gender_' . $value) }}</span>
-                    </label>
+                    </button>
                     @endforeach
                 </div>
                 @error('gender')
@@ -135,15 +135,16 @@
 
 @push('scripts')
 <script>
-    // Gender selection highlight
-    document.querySelectorAll('.gender-radio').forEach(radio => {
-        radio.addEventListener('change', () => {
-            document.querySelectorAll('.gender-option').forEach(label => {
-                label.classList.remove('border-violet-400', 'bg-violet-50', 'ring-2', 'ring-violet-300');
+    // Gender button selection
+    document.querySelectorAll('.gender-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.gender-btn').forEach(b => {
+                b.classList.remove('border-violet-400', 'bg-violet-50', 'ring-2', 'ring-violet-300');
+                b.classList.add('border-gray-200');
             });
-            if (radio.checked) {
-                radio.closest('label').classList.add('border-violet-400', 'bg-violet-50', 'ring-2', 'ring-violet-300');
-            }
+            btn.classList.add('border-violet-400', 'bg-violet-50', 'ring-2', 'ring-violet-300');
+            btn.classList.remove('border-gray-200');
+            document.getElementById('gender-value').value = btn.dataset.gender;
         });
     });
 

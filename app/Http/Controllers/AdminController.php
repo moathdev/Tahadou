@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminLoginRequest;
+use App\Http\Requests\EditParticipantRequest;
 use App\Models\Group;
 use App\Models\Participant;
 use App\Services\DrawService;
@@ -103,6 +104,27 @@ class AdminController extends Controller
         $participant->delete();
 
         return redirect()->route('admin.dashboard', $uuid)->with('success', __('app.participant_removed'));
+    }
+
+    /**
+     * Edit a participant's details (admin only, before draw).
+     */
+    public function editParticipant(EditParticipantRequest $request, string $uuid, Participant $participant): RedirectResponse
+    {
+        $this->requireAuth($uuid);
+
+        $group = Group::where('uuid', $uuid)->firstOrFail();
+
+        abort_unless($participant->group_id === $group->id, 403);
+        abort_if($group->is_drawn, 403, 'Draw already executed — cannot edit participants.');
+
+        $participant->update([
+            'name'      => $request->name,
+            'gender'    => $request->gender,
+            'interests' => $request->interests,
+        ]);
+
+        return redirect()->route('admin.dashboard', $uuid)->with('success', __('app.participant_updated'));
     }
 
     /**
