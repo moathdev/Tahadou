@@ -35,7 +35,7 @@ class AdminController extends Controller
         }
 
         $lookup = hash('sha256', $input);
-        $group  = Group::where('admin_lookup', $lookup)->first();
+        $group  = Group::query()->where('admin_lookup', $lookup)->first();
 
         if (! $group || ! Hash::check($input, $group->admin_code)) {
             return back()->withErrors(['admin_code' => __('app.admin_code_invalid')]);
@@ -51,7 +51,7 @@ class AdminController extends Controller
      */
     public function loginForm(string $uuid)
     {
-        $group = Group::where('uuid', $uuid)->firstOrFail();
+        $group = Group::query()->where('uuid', $uuid)->firstOrFail();
         return view('admin.login', compact('group'));
     }
 
@@ -60,7 +60,7 @@ class AdminController extends Controller
      */
     public function login(AdminLoginRequest $request, string $uuid): RedirectResponse
     {
-        $group = Group::where('uuid', $uuid)->firstOrFail();
+        $group = Group::query()->where('uuid', $uuid)->firstOrFail();
 
         if (! Hash::check($request->admin_code, $group->admin_code)) {
             return back()->withErrors(['admin_code' => 'Invalid admin code.']);
@@ -78,10 +78,10 @@ class AdminController extends Controller
     {
         $this->requireAuth($uuid);
 
-        $group        = Group::where('uuid', $uuid)->withCount('participants')->firstOrFail();
+        $group        = Group::query()->where('uuid', $uuid)->withCount('participants')->firstOrFail();
         $participants = $group->participants()
             ->with('assignedTo')
-            ->select(['id', 'name', 'phone_number', 'interests', 'assigned_to_id', 'created_at'])
+            ->select(['id', 'name', 'phone_number', 'interests', 'assigned_to_id', 'created_at', 'gender'])
             ->latest()
             ->get();
 
@@ -95,7 +95,7 @@ class AdminController extends Controller
     {
         $this->requireAuth($uuid);
 
-        $group = Group::where('uuid', $uuid)->firstOrFail();
+        $group = Group::query()->where('uuid', $uuid)->firstOrFail();
 
         abort_unless($participant->group_id === $group->id, 403);
         abort_if($group->is_drawn, 403, 'Draw already executed — cannot remove participants.');
@@ -112,7 +112,7 @@ class AdminController extends Controller
     {
         $this->requireAuth($uuid);
 
-        $group = Group::where('uuid', $uuid)->firstOrFail();
+        $group = Group::query()->where('uuid', $uuid)->firstOrFail();
 
         abort_unless($participant->group_id === $group->id, 403);
         abort_if($group->is_drawn, 403, 'Draw already executed — cannot edit participants.');
@@ -136,7 +136,7 @@ class AdminController extends Controller
     {
         $this->requireAuth($uuid);
 
-        $group = Group::where('uuid', $uuid)->firstOrFail();
+        $group = Group::query()->where('uuid', $uuid)->firstOrFail();
         $group->update(['is_locked' => ! $group->is_locked]);
 
         $msg = $group->is_locked ? __('app.registration_locked') : __('app.registration_unlocked');
@@ -150,7 +150,7 @@ class AdminController extends Controller
     {
         $this->requireAuth($uuid);
 
-        $group = Group::where('uuid', $uuid)->firstOrFail();
+        $group = Group::query()->where('uuid', $uuid)->firstOrFail();
 
         if ($group->is_drawn) {
             return back()->withErrors(['draw' => 'Draw already executed.']);

@@ -13,7 +13,7 @@ class ParticipantController extends Controller
      */
     public function show(string $uuid)
     {
-        $group = Group::where('uuid', $uuid)->firstOrFail();
+        $group = Group::query()->where('uuid', $uuid)->firstOrFail();
 
         if ($group->is_drawn) {
             return view('participant.closed', ['reason' => 'draw_executed', 'group' => $group]);
@@ -37,7 +37,7 @@ class ParticipantController extends Controller
      */
     public function register(RegisterParticipantRequest $request, string $uuid): RedirectResponse
     {
-        $group = Group::where('uuid', $uuid)->firstOrFail();
+        $group = Group::query()->where('uuid', $uuid)->firstOrFail();
 
         abort_if($group->is_drawn, 422, 'Draw has already been executed.');
         abort_if($group->is_locked, 422, 'Registration is locked.');
@@ -58,7 +58,7 @@ class ParticipantController extends Controller
      */
     public function success(string $uuid)
     {
-        $group = Group::where('uuid', $uuid)->firstOrFail();
+        $group = Group::query()->where('uuid', $uuid)->firstOrFail();
         return view('participant.success', compact('group'));
     }
 }

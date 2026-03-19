@@ -25,7 +25,7 @@ class GroupController extends Controller
     {
         $rawAdminCode = strtoupper(Str::random(8));
 
-        $group = Group::create([
+        $group = Group::query()->create([
             'name'             => $request->name,
             'max_participants' => $request->max_participants,
             'max_gift_price'   => $request->max_gift_price ?: null,
@@ -44,7 +44,7 @@ class GroupController extends Controller
      */
     public function show(string $uuid)
     {
-        $group = Group::where('uuid', $uuid)->firstOrFail();
+        $group = Group::query()->where('uuid', $uuid)->firstOrFail();
 
         return view('group.created', [
             'group'         => $group,
