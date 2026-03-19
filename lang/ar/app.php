@@ -84,6 +84,22 @@ return [
     'remove_confirm'      => 'هل تريد إزالة :name؟',
     'reg_link_label'      => '🔗 رابط التسجيل',
 
+    // Gender
+    'gender_label'        => 'الجنس',
+    'gender_male'         => 'ذكر',
+    'gender_female'       => 'أنثى',
+    'gender_child'        => 'طفل',
+
+    // Edit Registration
+    'edit_title'          => 'تعديل بيانات التسجيل',
+    'edit_subtitle'       => 'يمكنك تعديل اسمك واهتماماتك وجنسك طالما لم تُنفَّذ القرعة.',
+    'edit_hint'           => 'هل تريد تعديل بياناتك؟',
+    'edit_btn'            => 'تعديل بياناتي',
+    'edit_save_btn'       => '💾 حفظ التعديلات',
+    'edit_saved'          => 'تم حفظ التعديلات بنجاح!',
+    'edit_draw_done'      => 'تمت القرعة — لا يمكن تعديل البيانات بعد الآن.',
+    'cancel_btn'          => 'إلغاء',
+
     // Participant Registration
     'join_title'          => 'انضم إلى تبادل الهدايا',
     'join_count'          => ':current / :max مشترك مسجّل',

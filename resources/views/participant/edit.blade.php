@@ -1,27 +1,20 @@
 @extends('layouts.app')
 
-@section('title', __('app.join_title') . ' — ' . $group->name)
+@section('title', __('app.edit_title') . ' — ' . $group->name)
 
 @section('content')
 <div class="max-w-lg mx-auto">
 
     <!-- Header -->
     <div class="text-center mb-8">
-        <div class="text-5xl mb-3">🎁</div>
-        <h1 class="text-2xl font-bold text-gray-800">{{ __('app.join_title') }}</h1>
+        <div class="text-5xl mb-3">✏️</div>
+        <h1 class="text-2xl font-bold text-gray-800">{{ __('app.edit_title') }}</h1>
         <p class="text-violet-600 font-medium mt-1">{{ $group->name }}</p>
-        <p class="text-gray-400 text-xs mt-1">
-            {{ __('app.join_count', ['current' => $group->participants()->count(), 'max' => $group->max_participants]) }}
-        </p>
-        @if($group->max_gift_price)
-        <div class="inline-flex items-center gap-1.5 mt-2 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-medium">
-            {{ __('app.max_gift_price_badge', ['price' => number_format($group->max_gift_price)]) }}
-        </div>
-        @endif
+        <p class="text-gray-400 text-xs mt-1">{{ __('app.edit_subtitle') }}</p>
     </div>
 
     <div class="bg-white rounded-2xl shadow-lg border border-violet-100 p-8">
-        <form action="{{ route('participant.register.submit', $group->uuid) }}" method="POST" class="space-y-6">
+        <form action="{{ route('participant.edit.submit', ['uuid' => $group->uuid, 'editToken' => $editToken]) }}" method="POST" class="space-y-6">
             @csrf
 
             <!-- Full Name -->
@@ -33,7 +26,7 @@
                     type="text"
                     id="name"
                     name="name"
-                    value="{{ old('name') }}"
+                    value="{{ old('name', $participant->name) }}"
                     placeholder="{{ __('app.name_placeholder') }}"
                     required
                     class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-violet-400 focus:border-violet-400 outline-none transition text-sm"
@@ -49,43 +42,23 @@
                     {{ __('app.gender_label') }} <span class="text-red-400">*</span>
                 </label>
                 <div class="grid grid-cols-3 gap-3">
-                    @foreach(['male' => ['emoji' => '👨', 'key' => 'male'], 'female' => ['emoji' => '👩', 'key' => 'female'], 'child' => ['emoji' => '🧒', 'key' => 'child']] as $value => $meta)
-                    <label class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-violet-300 hover:bg-violet-50 transition gender-option {{ old('gender') === $value ? 'border-violet-400 bg-violet-50' : '' }}">
+                    @foreach(['male' => '👨', 'female' => '👩', 'child' => '🧒'] as $value => $emoji)
+                    @php $selected = old('gender', $participant->gender) === $value; @endphp
+                    <label class="flex flex-col items-center gap-1.5 p-3 rounded-xl border cursor-pointer hover:border-violet-300 hover:bg-violet-50 transition gender-option {{ $selected ? 'border-violet-400 bg-violet-50 ring-2 ring-violet-300' : 'border-gray-200' }}">
                         <input
                             type="radio"
                             name="gender"
                             value="{{ $value }}"
-                            {{ old('gender') === $value ? 'checked' : '' }}
+                            {{ $selected ? 'checked' : '' }}
                             class="sr-only gender-radio"
                             required
                         />
-                        <span class="text-2xl">{{ $meta['emoji'] }}</span>
+                        <span class="text-2xl">{{ $emoji }}</span>
                         <span class="text-xs font-medium text-gray-600">{{ __('app.gender_' . $value) }}</span>
                     </label>
                     @endforeach
                 </div>
                 @error('gender')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!-- Phone Number -->
-            <div>
-                <label for="phone_number" class="block text-sm font-medium text-gray-600 mb-1">
-                    {{ __('app.phone_label') }} <span class="text-red-400">*</span>
-                </label>
-                <input
-                    type="tel"
-                    id="phone_number"
-                    name="phone_number"
-                    value="{{ old('phone_number') }}"
-                    placeholder="{{ __('app.phone_placeholder') }}"
-                    dir="ltr"
-                    required
-                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-violet-400 focus:border-violet-400 outline-none transition text-sm text-left"
-                />
-                <p class="text-xs text-gray-400 mt-1">{{ __('app.phone_hint') }}</p>
-                @error('phone_number')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -100,12 +73,13 @@
 
                 <div class="grid grid-cols-2 gap-2" id="interests-grid">
                     @foreach($interests as $key)
-                    <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-violet-300 hover:bg-violet-50 transition interest-option {{ in_array($key, old('interests', [])) ? 'border-violet-400 bg-violet-50' : '' }}">
+                    @php $checked = in_array($key, old('interests', $participant->interests ?? [])); @endphp
+                    <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-violet-300 hover:bg-violet-50 transition interest-option {{ $checked ? 'border-violet-400 bg-violet-50' : '' }}">
                         <input
                             type="checkbox"
                             name="interests[]"
                             value="{{ $key }}"
-                            {{ in_array($key, old('interests', [])) ? 'checked' : '' }}
+                            {{ $checked ? 'checked' : '' }}
                             class="interest-checkbox accent-violet-600"
                         />
                         <span class="text-sm">{{ __('app.interest_' . $key) }}</span>
@@ -122,12 +96,20 @@
                 </p>
             </div>
 
-            <button
-                type="submit"
-                class="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold transition text-sm shadow"
-            >
-                {{ __('app.join_btn') }}
-            </button>
+            <div class="flex gap-3">
+                <a
+                    href="{{ route('participant.success', ['uuid' => $group->uuid, 'edit_token' => $editToken]) }}"
+                    class="flex-1 py-3 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium text-sm text-center transition"
+                >
+                    {{ __('app.cancel_btn') }}
+                </a>
+                <button
+                    type="submit"
+                    class="flex-1 py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold transition text-sm shadow"
+                >
+                    {{ __('app.edit_save_btn') }}
+                </button>
+            </div>
         </form>
     </div>
 </div>
@@ -140,9 +122,12 @@
         radio.addEventListener('change', () => {
             document.querySelectorAll('.gender-option').forEach(label => {
                 label.classList.remove('border-violet-400', 'bg-violet-50', 'ring-2', 'ring-violet-300');
+                label.classList.add('border-gray-200');
             });
             if (radio.checked) {
-                radio.closest('label').classList.add('border-violet-400', 'bg-violet-50', 'ring-2', 'ring-violet-300');
+                const lbl = radio.closest('label');
+                lbl.classList.add('border-violet-400', 'bg-violet-50', 'ring-2', 'ring-violet-300');
+                lbl.classList.remove('border-gray-200');
             }
         });
     });

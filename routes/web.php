@@ -56,7 +56,9 @@ Route::prefix('admin/{uuid}')->name('admin.')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('join/{uuid}')->name('participant.')->group(function () {
-    Route::get('/',       [ParticipantController::class, 'show'])->name('register');
-    Route::post('/',      [ParticipantController::class, 'register'])->name('register.submit');
-    Route::get('/thanks', [ParticipantController::class, 'success'])->name('success');
+    Route::get('/',                          [ParticipantController::class, 'show'])->name('register');
+    Route::post('/',                         [ParticipantController::class, 'register'])->name('register.submit');
+    Route::get('/thanks',                    [ParticipantController::class, 'success'])->name('success');
+    Route::get('/edit/{editToken}',          [ParticipantController::class, 'editForm'])->name('edit');
+    Route::post('/edit/{editToken}',         [ParticipantController::class, 'editSave'])->name('edit.submit');
 });

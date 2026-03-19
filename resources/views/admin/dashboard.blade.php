@@ -109,7 +109,17 @@
                         {{-- Details --}}
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 flex-wrap">
-                                <p class="font-semibold text-gray-800">{{ $participant->name }}</p>
+                                <p class="font-semibold text-gray-800">
+                                    @if($participant->gender === 'male') 👨
+                                    @elseif($participant->gender === 'female') 👩
+                                    @elseif($participant->gender === 'child') 🧒
+                                    @endif
+                                    {{ $participant->name }}
+                                </p>
+                                <span class="text-xs px-2 py-0.5 rounded-full
+                                    {{ $participant->gender === 'male' ? 'bg-blue-50 text-blue-600' : ($participant->gender === 'female' ? 'bg-pink-50 text-pink-600' : 'bg-orange-50 text-orange-600') }}">
+                                    {{ __('app.gender_' . ($participant->gender ?? 'male')) }}
+                                </span>
                                 @if($group->is_drawn && $participant->assignedTo)
                                     <span dir="ltr" class="text-xs px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-medium">
                                         🎁 → {{ $participant->assignedTo->name }}
