@@ -45,7 +45,8 @@ Route::prefix('admin/{uuid}')->name('admin.')->group(function () {
     Route::get('/login',     [AdminController::class, 'loginForm'])->name('login');
     Route::post('/login',    [AdminController::class, 'login'])->name('login.submit');
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::delete('/participants/{participant}', [AdminController::class, 'removeParticipant'])->name('participants.remove');
+    Route::delete('/participants/{participant}',     [AdminController::class, 'removeParticipant'])->name('participants.remove');
+    Route::patch('/participants/{participant}',      [AdminController::class, 'editParticipant'])->name('participants.edit');
     Route::post('/lock',          [AdminController::class, 'toggleLock'])->name('lock');
     Route::post('/draw',          [AdminController::class, 'executeDraw'])->name('draw');
 });
@@ -56,9 +57,7 @@ Route::prefix('admin/{uuid}')->name('admin.')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('join/{uuid}')->name('participant.')->group(function () {
-    Route::get('/',                          [ParticipantController::class, 'show'])->name('register');
-    Route::post('/',                         [ParticipantController::class, 'register'])->name('register.submit');
-    Route::get('/thanks',                    [ParticipantController::class, 'success'])->name('success');
-    Route::get('/edit/{editToken}',          [ParticipantController::class, 'editForm'])->name('edit');
-    Route::post('/edit/{editToken}',         [ParticipantController::class, 'editSave'])->name('edit.submit');
+    Route::get('/',       [ParticipantController::class, 'show'])->name('register');
+    Route::post('/',      [ParticipantController::class, 'register'])->name('register.submit');
+    Route::get('/thanks', [ParticipantController::class, 'success'])->name('success');
 });

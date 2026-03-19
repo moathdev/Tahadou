@@ -10,13 +10,7 @@ return new class extends Migration
     {
         Schema::table('participants', function (Blueprint $table) {
             $table->enum('gender', ['male', 'female', 'child'])
-                  ->default('male')
                   ->after('phone_number');
-
-            $table->string('edit_token', 64)
-                  ->nullable()
-                  ->unique()
-                  ->after('interests');
         });
     }
 
@@ -24,7 +18,6 @@ return new class extends Migration
     {
         Schema::table('participants', function (Blueprint $table) {
             $table->dropColumn('gender');
-            $table->dropColumn('edit_token');
         });
     }
 };

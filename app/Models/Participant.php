@@ -16,7 +16,6 @@ class Participant extends Model
         'phone_number',
         'gender',
         'interests',
-        'edit_token',
         'assigned_to_id',
     ];
 
