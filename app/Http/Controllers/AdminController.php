@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminLoginRequest;
-use App\Http\Requests\EditParticipantRequest;
 use App\Models\Group;
 use App\Models\Participant;
 use App\Services\DrawService;
@@ -109,7 +108,7 @@ class AdminController extends Controller
     /**
      * Edit a participant's details (admin only, before draw).
      */
-    public function editParticipant(EditParticipantRequest $request, string $uuid, Participant $participant): RedirectResponse
+    public function editParticipant(Request $request, string $uuid, Participant $participant): RedirectResponse
     {
         $this->requireAuth($uuid);
 
@@ -118,11 +117,14 @@ class AdminController extends Controller
         abort_unless($participant->group_id === $group->id, 403);
         abort_if($group->is_drawn, 403, 'Draw already executed — cannot edit participants.');
 
-        $participant->update([
-            'name'      => $request->name,
-            'gender'    => $request->gender,
-            'interests' => $request->interests,
+        $validated = $request->validate([
+            'name'        => ['required', 'string', 'min:3', 'max:100', 'regex:/^[\p{L}\s\-\.]+$/u'],
+            'gender'      => ['required', \Illuminate\Validation\Rule::in(['male', 'female', 'child'])],
+            'interests'   => ['required', 'array', 'min:1', 'max:3'],
+            'interests.*' => ['string', \Illuminate\Validation\Rule::in(config('tahadou.interests'))],
         ]);
+
+        $participant->update($validated);
 
         return redirect()->route('admin.dashboard', $uuid)->with('success', __('app.participant_updated'));
     }
