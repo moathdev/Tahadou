@@ -10,13 +10,15 @@
 - 🕌 **Hadith section** — homepage includes an explanation of the Prophetic hadith *"Tahadou Tahabbu"* in both Arabic and English
 - 🔗 **Shareable registration link** — auto-generated when a group is created
 - 🔑 **Code-only admin access** — enter your 8-character admin code at `/admin` to reach your dashboard (no UUID needed)
-- 👥 **Admin dashboard** — view participants, remove them, lock registration, execute the draw, send WhatsApp messages
+- 👥 **Admin dashboard** — view participants, edit their details, remove them, lock registration, execute the draw, send WhatsApp messages
 - 💰 **Max gift price** — optional budget cap shown to participants at registration and included in the WhatsApp message
-- 📝 **Participant registration** — full name, WhatsApp number, up to 3 interests from 10 categories
-- 🎯 **Smart draw algorithm** — Circular Permutation (no self-assignment, no two-person loops)
+- 📝 **Participant registration** — full name, WhatsApp number, gender, up to 3 interests from 10 categories
+- 👤 **Gender field** — participants select Male / Female / Child at registration
+- 🎯 **Gender-aware draw algorithm** — groups participants by gender before the draw (male→male, female→female, child→child, best-effort)
+- ✏️ **Admin participant editing** — admin can update a participant's name, gender, and interests before the draw via an inline modal
 - 📱 **Direct WhatsApp send** — after the draw, each row has a button that opens WhatsApp with a pre-written message in the admin's active language (Arabic or English)
 - ✅ **Send tracking** — button turns to "Sent ✓" with an option to resend (stored in `localStorage`)
-- 🛡️ **Strict validation** — Saudi mobile format only (`05XXXXXXXXX`), name ≥ 3 characters, no duplicate phone per group
+- 🛡️ **Strict validation** — Saudi mobile format only (`05XXXXXXXXX`), name ≥ 3 characters; duplicate phone numbers allowed per group (a parent can register multiple children)
 
 ---
 
@@ -85,41 +87,47 @@ The admin code is stored as bcrypt in the DB. A SHA-256 lookup hash (`admin_look
 ## 🗄 Database Schema
 
 ### `groups`
-| Column           | Type      | Notes                                         |
-|------------------|-----------|-----------------------------------------------|
-| id               | bigint PK |                                               |
-| uuid             | string    | Unique — used in participant registration URL |
-| name             | string    | Group display name                            |
-| max_participants | int       | Maximum allowed participants                  |
-| max_gift_price   | int?      | Optional max gift budget (SAR)                |
-| admin_code       | string    | Bcrypt-hashed admin password                  |
+| Column           | Type      | Notes                                          |
+|------------------|-----------|------------------------------------------------|
+| id               | bigint PK |                                                |
+| uuid             | string    | Unique — used in participant registration URL  |
+| name             | string    | Group display name                             |
+| max_participants | int       | Maximum allowed participants                   |
+| max_gift_price   | int?      | Optional max gift budget (SAR)                 |
+| admin_code       | string    | Bcrypt-hashed admin password                   |
 | admin_lookup     | string    | SHA-256 of raw admin code (for code-only login)|
-| is_locked        | boolean   | Locks new registrations when true             |
-| is_drawn         | boolean   | True after draw is executed                   |
-| created_at/updated_at | timestamp |                                          |
+| is_locked        | boolean   | Locks new registrations when true              |
+| is_drawn         | boolean   | True after draw is executed                    |
+| created_at/updated_at | timestamp |                                           |
 
 ### `participants`
-| Column          | Type      | Notes                                    |
-|-----------------|-----------|------------------------------------------|
-| id              | bigint PK |                                          |
-| group_id        | bigint FK | → groups.id                              |
-| name            | string    | Full name                                |
-| phone_number    | string    | Saudi mobile (unique per group)          |
-| interests       | JSON      | Up to 3 selected interest keys           |
-| assigned_to_id  | bigint FK | → participants.id (null until draw)      |
-| created_at/updated_at | timestamp |                                    |
+| Column          | Type                        | Notes                               |
+|-----------------|-----------------------------|-------------------------------------|
+| id              | bigint PK                   |                                     |
+| group_id        | bigint FK                   | → groups.id                         |
+| name            | string                      | Full name                           |
+| phone_number    | string                      | Saudi mobile (duplicates allowed)   |
+| gender          | enum(male, female, child)   | Selected at registration            |
+| interests       | JSON                        | Up to 3 selected interest keys      |
+| assigned_to_id  | bigint FK                   | → participants.id (null until draw) |
+| created_at/updated_at | timestamp             |                                     |
 
 ---
 
 ## 🎯 Draw Algorithm
 
-**Circular Permutation (Derangement):**
+**Gender-aware Circular Permutation:**
 
-1. Participants array is shuffled randomly
-2. Each participant `[i]` gives to `[i+1]`; the last gives to `[0]`
-3. ✅ No one draws themselves
-4. ✅ No two-person closed loops (for groups > 2)
-5. Results saved directly to DB — no external services
+1. Participants are bucketed by gender: male, female, child
+2. Each bucket is shuffled randomly
+3. Buckets are merged into a single ordered list
+4. Each participant `[i]` gives to `[i+1]`; the last gives to `[0]`
+5. ✅ Same-gender gifting within each bucket (best-effort)
+6. ✅ No one draws themselves
+7. ✅ No two-person closed loops (for groups > 2 within a gender)
+8. Results saved directly to DB — no external services
+
+> If a gender group has only one person, they overflow to the next group (unavoidable).
 
 ---
 
@@ -233,7 +241,7 @@ app/
 ├── Http/
 │   ├── Controllers/
 │   │   ├── GroupController.php        # Group creation
-│   │   ├── AdminController.php        # Find group, dashboard, draw, WhatsApp
+│   │   ├── AdminController.php        # Find group, dashboard, draw, edit participant, WhatsApp
 │   │   └── ParticipantController.php  # Registration
 │   ├── Middleware/
 │   │   └── SetLocale.php              # Session-based ar/en locale
@@ -242,8 +250,7 @@ app/
 │   ├── Group.php
 │   └── Participant.php
 └── Services/
-    ├── DrawService.php                # Circular permutation algorithm
-    └── XlsxExporter.php               # SpreadsheetML export (internal use)
+    └── DrawService.php                # Gender-aware circular permutation algorithm
 
 lang/
 ├── ar/app.php + validation.php        # Arabic translations
@@ -256,7 +263,7 @@ resources/views/
 ├── admin/
 │   ├── find.blade.php                 # Code-only login entry (/admin)
 │   ├── login.blade.php                # UUID-based login (direct URL access)
-│   └── dashboard.blade.php           # Group management + WhatsApp buttons
+│   └── dashboard.blade.php           # Group management + edit modal + WhatsApp buttons
 └── participant/
     ├── register.blade.php
     ├── success.blade.php
@@ -266,7 +273,9 @@ database/migrations/
 ├── 2025_01_01_000001_create_groups_table.php
 ├── 2025_01_01_000002_create_participants_table.php
 ├── 2025_01_02_000001_add_max_gift_price_to_groups_table.php
-└── 2025_01_03_000001_add_admin_lookup_to_groups_table.php
+├── 2025_01_03_000001_add_admin_lookup_to_groups_table.php
+├── 2026_03_01_000001_remove_phone_unique_from_participants_table.php
+└── 2026_03_19_000001_add_gender_to_participants.php
 
 k8s/
 ├── deployment.yaml                    # App + queue worker
