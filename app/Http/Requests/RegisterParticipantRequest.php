@@ -24,6 +24,7 @@ class RegisterParticipantRequest extends FormRequest
                 // Duplicates are allowed — a parent may register multiple children under their number
                 'regex:/^(\+?966|0)5[0-9]{8}$/',
             ],
+            'gender'       => ['required', Rule::in(['male', 'female', 'child'])],
             'interests'    => ['required', 'array', 'min:1', 'max:3'],
             'interests.*'  => ['string', Rule::in(config('tahadou.interests'))],
         ];

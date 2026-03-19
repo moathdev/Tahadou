@@ -14,7 +14,9 @@ class Participant extends Model
         'group_id',
         'name',
         'phone_number',
+        'gender',
         'interests',
+        'edit_token',
         'assigned_to_id',
     ];
 

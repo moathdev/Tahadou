@@ -84,6 +84,22 @@ return [
     'remove_confirm'      => 'Remove :name?',
     'reg_link_label'      => '🔗 Registration Link',
 
+    // Gender
+    'gender_label'        => 'Gender',
+    'gender_male'         => 'Male',
+    'gender_female'       => 'Female',
+    'gender_child'        => 'Child',
+
+    // Edit Registration
+    'edit_title'          => 'Edit Your Registration',
+    'edit_subtitle'       => 'You can update your name, interests, and gender as long as the draw hasn\'t been executed.',
+    'edit_hint'           => 'Need to make changes?',
+    'edit_btn'            => 'Edit My Info',
+    'edit_save_btn'       => '💾 Save Changes',
+    'edit_saved'          => 'Your changes have been saved!',
+    'edit_draw_done'      => 'The draw is done — no more edits allowed.',
+    'cancel_btn'          => 'Cancel',
+
     // Participant Registration
     'join_title'          => 'Join the Gift Exchange',
     'join_count'          => ':current / :max participants registered',
