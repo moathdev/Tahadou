@@ -249,13 +249,17 @@
                     <label class="block text-sm font-medium text-gray-600 mb-2">
                         {{ __('app.gender_label') }} <span class="text-red-400">*</span>
                     </label>
+                    <input type="hidden" name="gender" id="modal-gender-value" value="" />
                     <div class="grid grid-cols-3 gap-3">
                         @foreach(['male' => '👨', 'female' => '👩', 'child' => '🧒'] as $gVal => $gEmoji)
-                        <label class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-violet-300 hover:bg-violet-50 transition modal-gender-option">
-                            <input type="radio" name="gender" value="{{ $gVal }}" class="sr-only modal-gender-radio" />
+                        <button
+                            type="button"
+                            data-gender="{{ $gVal }}"
+                            class="modal-gender-btn flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-violet-300 hover:bg-violet-50 transition"
+                        >
                             <span class="text-2xl">{{ $gEmoji }}</span>
                             <span class="text-xs font-medium text-gray-600">{{ __('app.gender_' . $gVal) }}</span>
-                        </label>
+                        </button>
                         @endforeach
                     </div>
                 </div>
@@ -332,15 +336,15 @@ function openEditModal(id, name, gender, interests) {
     // Populate name
     document.getElementById('edit-name').value = name;
 
-    // Set gender radio
-    document.querySelectorAll('.modal-gender-radio').forEach(r => {
-        r.checked = (r.value === gender);
-        const lbl = r.closest('label');
-        lbl.classList.toggle('border-violet-400', r.checked);
-        lbl.classList.toggle('bg-violet-50', r.checked);
-        lbl.classList.toggle('ring-2', r.checked);
-        lbl.classList.toggle('ring-violet-300', r.checked);
-        lbl.classList.toggle('border-gray-200', !r.checked);
+    // Set gender
+    document.getElementById('modal-gender-value').value = gender;
+    document.querySelectorAll('.modal-gender-btn').forEach(btn => {
+        const active = btn.dataset.gender === gender;
+        btn.classList.toggle('border-violet-400', active);
+        btn.classList.toggle('bg-violet-50', active);
+        btn.classList.toggle('ring-2', active);
+        btn.classList.toggle('ring-violet-300', active);
+        btn.classList.toggle('border-gray-200', !active);
     });
 
     // Set interests checkboxes
@@ -365,18 +369,16 @@ document.getElementById('edit-modal').addEventListener('click', function(e) {
     if (e.target === this) closeEditModal();
 });
 
-// Gender radio highlight
-document.querySelectorAll('.modal-gender-radio').forEach(radio => {
-    radio.addEventListener('change', () => {
-        document.querySelectorAll('.modal-gender-option').forEach(lbl => {
-            lbl.classList.remove('border-violet-400', 'bg-violet-50', 'ring-2', 'ring-violet-300');
-            lbl.classList.add('border-gray-200');
+// Gender button highlight
+document.querySelectorAll('.modal-gender-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.modal-gender-btn').forEach(b => {
+            b.classList.remove('border-violet-400', 'bg-violet-50', 'ring-2', 'ring-violet-300');
+            b.classList.add('border-gray-200');
         });
-        if (radio.checked) {
-            const lbl = radio.closest('label');
-            lbl.classList.add('border-violet-400', 'bg-violet-50', 'ring-2', 'ring-violet-300');
-            lbl.classList.remove('border-gray-200');
-        }
+        btn.classList.add('border-violet-400', 'bg-violet-50', 'ring-2', 'ring-violet-300');
+        btn.classList.remove('border-gray-200');
+        document.getElementById('modal-gender-value').value = btn.dataset.gender;
     });
 });
 
