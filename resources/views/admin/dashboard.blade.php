@@ -189,20 +189,28 @@
                         </a>
                         @endif
 
-                        {{-- Remove button --}}
+                        {{-- Edit + Remove buttons (admin only, before draw) --}}
                         @if(! $group->is_drawn)
-                        <form
-                            action="{{ route('admin.participants.remove', [$group->uuid, $participant->id]) }}"
-                            method="POST"
-                            onsubmit="return confirm('{{ __('app.remove_confirm', ['name' => $participant->name]) }}');"
-                            class="ms-auto shrink-0"
-                        >
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-xs text-red-400 hover:text-red-600 transition">
-                                {{ __('app.remove_btn') }}
+                        <div class="ms-auto shrink-0 flex items-center gap-2">
+                            <button
+                                type="button"
+                                onclick="openEditModal({{ $participant->id }}, '{{ addslashes($participant->name) }}', '{{ $participant->gender }}', {{ json_encode($participant->interests ?? []) }})"
+                                class="text-xs text-violet-500 hover:text-violet-700 transition font-medium"
+                            >
+                                {{ __('app.btn_edit_participant') }}
                             </button>
-                        </form>
+                            <form
+                                action="{{ route('admin.participants.remove', [$group->uuid, $participant->id]) }}"
+                                method="POST"
+                                onsubmit="return confirm('{{ __('app.remove_confirm', ['name' => addslashes($participant->name)]) }}');"
+                            >
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-xs text-red-400 hover:text-red-600 transition">
+                                    {{ __('app.remove_btn') }}
+                                </button>
+                            </form>
+                        </div>
                         @endif
 
                     </div>
@@ -211,6 +219,85 @@
             </ul>
         @endif
     </div>
+
+    <!-- Edit Participant Modal -->
+    @if(! $group->is_drawn)
+    <div id="edit-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-4">
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 w-full max-w-md p-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-5">{{ __('app.edit_participant_title') }}</h2>
+
+            <form id="edit-form" method="POST" class="space-y-5">
+                @csrf
+                @method('PATCH')
+
+                <!-- Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">
+                        {{ __('app.name_label') }} <span class="text-red-400">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        name="name"
+                        id="edit-name"
+                        required
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-violet-400 focus:border-violet-400 outline-none transition text-sm"
+                    />
+                </div>
+
+                <!-- Gender -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-2">
+                        {{ __('app.gender_label') }} <span class="text-red-400">*</span>
+                    </label>
+                    <div class="grid grid-cols-3 gap-3">
+                        @foreach(['male' => '👨', 'female' => '👩', 'child' => '🧒'] as $gVal => $gEmoji)
+                        <label class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-violet-300 hover:bg-violet-50 transition modal-gender-option">
+                            <input type="radio" name="gender" value="{{ $gVal }}" class="sr-only modal-gender-radio" />
+                            <span class="text-2xl">{{ $gEmoji }}</span>
+                            <span class="text-xs font-medium text-gray-600">{{ __('app.gender_' . $gVal) }}</span>
+                        </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Interests -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">
+                        {{ __('app.interests_label') }}
+                        <span class="text-gray-400 font-normal">{{ __('app.interests_hint_count') }}</span>
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                        @foreach(config('tahadou.interests') as $iKey)
+                        <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-violet-300 hover:bg-violet-50 transition modal-interest-option">
+                            <input type="checkbox" name="interests[]" value="{{ $iKey }}" class="modal-interest-checkbox accent-violet-600" />
+                            <span class="text-xs">{{ __('app.interest_' . $iKey) }}</span>
+                        </label>
+                        @endforeach
+                    </div>
+                    <p id="modal-interest-warning" class="text-amber-500 text-xs mt-2 hidden">
+                        {{ __('app.interests_max_warn') }}
+                    </p>
+                </div>
+
+                <div class="flex gap-3 pt-1">
+                    <button
+                        type="button"
+                        onclick="closeEditModal()"
+                        class="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium transition"
+                    >
+                        {{ __('app.cancel_btn') }}
+                    </button>
+                    <button
+                        type="submit"
+                        class="flex-1 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold transition shadow"
+                    >
+                        {{ __('app.edit_save_btn') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
 
     <!-- Registration Link -->
     <div class="mt-6 bg-violet-50 rounded-xl p-4 border border-violet-100">
@@ -231,6 +318,87 @@
 @endsection
 
 @push('scripts')
+@if(! $group->is_drawn)
+<script>
+const BASE_EDIT_URL = '{{ rtrim(route("admin.participants.remove", [$group->uuid, 0]), "/0") }}/';
+
+function openEditModal(id, name, gender, interests) {
+    const modal = document.getElementById('edit-modal');
+    const form  = document.getElementById('edit-form');
+
+    // Set form action
+    form.action = BASE_EDIT_URL + id;
+
+    // Populate name
+    document.getElementById('edit-name').value = name;
+
+    // Set gender radio
+    document.querySelectorAll('.modal-gender-radio').forEach(r => {
+        r.checked = (r.value === gender);
+        const lbl = r.closest('label');
+        lbl.classList.toggle('border-violet-400', r.checked);
+        lbl.classList.toggle('bg-violet-50', r.checked);
+        lbl.classList.toggle('ring-2', r.checked);
+        lbl.classList.toggle('ring-violet-300', r.checked);
+        lbl.classList.toggle('border-gray-200', !r.checked);
+    });
+
+    // Set interests checkboxes
+    document.querySelectorAll('.modal-interest-checkbox').forEach(cb => {
+        cb.checked = interests.includes(cb.value);
+        cb.closest('label').classList.toggle('border-violet-400', cb.checked);
+        cb.closest('label').classList.toggle('bg-violet-50', cb.checked);
+    });
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeEditModal() {
+    const modal = document.getElementById('edit-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+// Close on backdrop click
+document.getElementById('edit-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeEditModal();
+});
+
+// Gender radio highlight
+document.querySelectorAll('.modal-gender-radio').forEach(radio => {
+    radio.addEventListener('change', () => {
+        document.querySelectorAll('.modal-gender-option').forEach(lbl => {
+            lbl.classList.remove('border-violet-400', 'bg-violet-50', 'ring-2', 'ring-violet-300');
+            lbl.classList.add('border-gray-200');
+        });
+        if (radio.checked) {
+            const lbl = radio.closest('label');
+            lbl.classList.add('border-violet-400', 'bg-violet-50', 'ring-2', 'ring-violet-300');
+            lbl.classList.remove('border-gray-200');
+        }
+    });
+});
+
+// Interests max-3 enforcement
+document.querySelectorAll('.modal-interest-checkbox').forEach(cb => {
+    cb.addEventListener('change', () => {
+        const checked = document.querySelectorAll('.modal-interest-checkbox:checked');
+        if (checked.length > 3) {
+            cb.checked = false;
+            document.getElementById('modal-interest-warning').classList.remove('hidden');
+        } else {
+            document.getElementById('modal-interest-warning').classList.add('hidden');
+        }
+        document.querySelectorAll('.modal-interest-checkbox').forEach(box => {
+            box.closest('label').classList.toggle('border-violet-400', box.checked);
+            box.closest('label').classList.toggle('bg-violet-50', box.checked);
+        });
+    });
+});
+</script>
+@endif
+
 @if($group->is_drawn)
 <script>
 (function () {

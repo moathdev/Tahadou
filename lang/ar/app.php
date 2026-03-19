@@ -70,6 +70,9 @@ return [
     'btn_send_whatsapp'     => 'أرسل واتساب',
     'btn_sent_whatsapp'     => '✓ تم الإرسال',
     'participant_removed'   => 'تم حذف المشترك.',
+    'participant_updated'   => 'تم تحديث بيانات المشترك.',
+    'btn_edit_participant'  => 'تعديل',
+    'edit_participant_title'=> 'تعديل بيانات المشترك',
     'registration_locked'   => '🔒 تم إغلاق التسجيل.',
     'registration_unlocked' => '🔓 تم فتح التسجيل.',
     'btn_unlock'          => '🔓 فتح التسجيل',
@@ -90,14 +93,8 @@ return [
     'gender_female'       => 'أنثى',
     'gender_child'        => 'طفل',
 
-    // Edit Registration
-    'edit_title'          => 'تعديل بيانات التسجيل',
-    'edit_subtitle'       => 'يمكنك تعديل اسمك واهتماماتك وجنسك طالما لم تُنفَّذ القرعة.',
-    'edit_hint'           => 'هل تريد تعديل بياناتك؟',
-    'edit_btn'            => 'تعديل بياناتي',
+    // Edit (admin only)
     'edit_save_btn'       => '💾 حفظ التعديلات',
-    'edit_saved'          => 'تم حفظ التعديلات بنجاح!',
-    'edit_draw_done'      => 'تمت القرعة — لا يمكن تعديل البيانات بعد الآن.',
     'cancel_btn'          => 'إلغاء',
 
     // Participant Registration
