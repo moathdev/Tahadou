@@ -13,14 +13,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('participants', function (Blueprint $table) {
+            // MySQL cannot drop a unique index that is also used by a foreign key.
+            // Drop the FK first, remove the unique index, then restore the FK.
+            $table->dropForeign(['group_id']);
             $table->dropUnique(['group_id', 'phone_number']);
+            $table->foreign('group_id')->references('id')->on('groups')->cascadeOnDelete();
         });
     }
 
     public function down(): void
     {
         Schema::table('participants', function (Blueprint $table) {
+            $table->dropForeign(['group_id']);
             $table->unique(['group_id', 'phone_number']);
+            $table->foreign('group_id')->references('id')->on('groups')->cascadeOnDelete();
         });
     }
 };
